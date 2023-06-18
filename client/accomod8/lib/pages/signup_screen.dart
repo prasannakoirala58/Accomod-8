@@ -1,4 +1,8 @@
+import 'package:accomod8/pages/login_screen.dart';
+// import 'package:accomod8/services/auth/node_auth_provider.dart';
+
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/pages/login_screen.dart';
@@ -176,7 +180,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
+
+                    // NodeAuthProvider().createUser(
+                    //   fullName: 'fullName',
+                    //   email: 'email',
+                    //   password: 'password',
+                    // );
+
                     const ErrorSnackBar(message: 'Cringe');
+
                     //Navigator.push(
                     //context,
                     //MaterialPageRoute(
