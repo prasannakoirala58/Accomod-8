@@ -49,7 +49,10 @@ class _LogInScreenState extends State<LogInScreen> {
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
-                      label: const Text("Enter Username"),
+                      label: const Text(
+                        "Enter Username",
+                        style: TextStyle(fontSize: 20),
+                      ),
                       prefixIcon: const Icon(Icons.person)),
                 ),
               ),
@@ -93,11 +96,11 @@ class _LogInScreenState extends State<LogInScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
-                            ));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => HomeScreen(),
+                        //     ));
                       },
                       child: const Padding(
                         padding:
