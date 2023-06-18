@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:accomod8/config.dart';
 import 'package:accomod8/services/auth/auth_provider.dart';
 import 'package:accomod8/services/auth/auth_user.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,7 @@ class NodeAuthProvider implements AuthProvider {
     };
 
     var response = await http.post(
-      Uri.parse('http://192.168.100.72:5000/register'),
+      Uri.parse(registrationUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(userBody),
     );
