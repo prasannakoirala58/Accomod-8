@@ -1,8 +1,10 @@
-import 'package:accomod8/pages/login_screen.dart';
+import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:accomod8/pages/login_screen.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
+
+enum GenderTypeEnum { Male, Female, Other }
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,6 +14,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  GenderTypeEnum? _genderTypeEnum;
   bool passToggle = true;
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   decoration: InputDecoration(
-                      labelText: "Full Name",
+                      labelText: "First Name *",
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.person)),
                 ),
@@ -47,9 +50,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   decoration: InputDecoration(
-                      labelText: "Email Address",
+                      labelText: "Last Name *",
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email)),
+                      prefixIcon: Icon(Icons.person)),
                 ),
               ),
               const SizedBox(height: 5),
@@ -57,9 +60,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   decoration: InputDecoration(
-                      labelText: "Phone Number",
+                      labelText: "Email Address *",
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.phone)),
+                      prefixIcon: Icon(Icons.email)),
+                ),
+              ),
+              Center(
+                child: Row(
+                  children: [
+                    Radio<GenderTypeEnum>(
+                      value: GenderTypeEnum.Male,
+                      groupValue: _genderTypeEnum,
+                      onChanged: (val) {
+                        setState(() {
+                          _genderTypeEnum = val;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 0,
+                    ),
+                    const Text("Male"),
+                    Radio<GenderTypeEnum>(
+                      value: GenderTypeEnum.Female,
+                      groupValue: _genderTypeEnum,
+                      onChanged: (val) {
+                        setState(() {
+                          _genderTypeEnum = val;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 0,
+                    ),
+                    const Text("Female"),
+                    Radio<GenderTypeEnum>(
+                      value: GenderTypeEnum.Other,
+                      groupValue: _genderTypeEnum,
+                      onChanged: (val) {
+                        setState(() {
+                          _genderTypeEnum = val;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 0,
+                    ),
+                    const Text("Others"),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                child: TextField(
+                  decoration: InputDecoration(
+                      labelText: "User Name",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.verified_user)),
                 ),
               ),
               const SizedBox(height: 8),
@@ -114,10 +172,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 10),
               Material(
-                color: Color.fromARGB(255, 242, 162, 131),
+                color: const Color.fromARGB(255, 242, 162, 131),
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
+                    const ErrorSnackBar(message: 'Cringe');
                     //Navigator.push(
                     //context,
                     //MaterialPageRoute(
@@ -156,7 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             builder: (context) => const LogInScreen(),
                           ));
                     },
-                    child: const Text("Goto Login",
+                    child: const Text("Go To Login",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
