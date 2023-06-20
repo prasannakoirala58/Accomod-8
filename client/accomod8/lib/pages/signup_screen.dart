@@ -1,5 +1,5 @@
+// ignore: unused_import
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/pages/login_screen.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
@@ -14,6 +14,36 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  late final TextEditingController _firstname;
+  late final TextEditingController _lastname;
+  late final TextEditingController _email;
+  late final TextEditingController _username;
+  late final TextEditingController _password;
+  late final TextEditingController _confirmpassword;
+  @override
+  void initState() {
+    _firstname = TextEditingController();
+    _lastname = TextEditingController();
+    _email = TextEditingController();
+    _username = TextEditingController();
+    _password = TextEditingController();
+    _confirmpassword = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _firstname.dispose();
+    _lastname.dispose();
+    _email.dispose();
+    _username.dispose();
+    _password.dispose();
+    _confirmpassword.dispose();
+    super.dispose();
+  }
+
+  bool _passwordVisible = false;
+
   GenderTypeEnum? _genderTypeEnum;
   bool passToggle = true;
   @override
@@ -36,9 +66,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               const SizedBox(height: 5),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
+                  controller: _firstname,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   decoration: InputDecoration(
                       labelText: "First Name *",
                       border: OutlineInputBorder(),
@@ -46,9 +79,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               const SizedBox(height: 5),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
+                  controller: _lastname,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   decoration: InputDecoration(
                       labelText: "Last Name *",
                       border: OutlineInputBorder(),
@@ -56,9 +92,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               const SizedBox(height: 5),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
+                  controller: _email,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: "Email Address *",
                       border: OutlineInputBorder(),
@@ -111,9 +151,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               SizedBox(height: 8),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
+                  controller: _username,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   decoration: InputDecoration(
                       labelText: "User Name",
                       border: OutlineInputBorder(),
@@ -127,47 +170,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   //yaha we obscure password wala text so that no one can see it
                   obscureText: passToggle ? true : false,
                   decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      label: const Text("Enter Password"),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          if (passToggle == true) {
-                            passToggle == false;
-                          } else {
-                            passToggle == true;
-                          }
-                          setState(() {});
-                        },
-                        child: passToggle
-                            ? const Icon(CupertinoIcons.eye_slash_fill)
-                            : const Icon(CupertinoIcons.eye_fill),
-                      )),
+                    border: const OutlineInputBorder(),
+                    label: const Text("Enter Password"),
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                      child: Icon(
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  controller: _confirmpassword,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   //yaha we obscure password wala text so that no one can see it
                   obscureText: passToggle ? true : false,
                   decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      label: const Text("Confirm Password"),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          if (passToggle == true) {
-                            passToggle == false;
-                          } else {
-                            passToggle == true;
-                          }
-                          setState(() {});
-                        },
-                        child: passToggle
-                            ? const Icon(CupertinoIcons.eye_slash_fill)
-                            : const Icon(CupertinoIcons.eye_fill),
-                      )),
+                    border: const OutlineInputBorder(),
+                    label: const Text("Confirm Password"),
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                      child: Icon(
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -176,7 +222,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
-                    const ErrorSnackBar(message: 'Cringe');
+                    // ErrorSnackBar.showErrorSnackBar(context, 'message');
                     //Navigator.push(
                     //context,
                     //MaterialPageRoute(
