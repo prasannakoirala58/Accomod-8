@@ -22,7 +22,7 @@ class NodeAuthProvider implements AuthProvider {
     };
 
     var response = await http.post(
-      Uri.parse(registrationUrl),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(userBody),
     );

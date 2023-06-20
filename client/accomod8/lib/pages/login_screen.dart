@@ -1,5 +1,4 @@
 import 'package:accomod8/pages/signup_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -10,7 +9,24 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-  bool passToggle = true;
+  late final TextEditingController _username;
+  late final TextEditingController _password;
+
+  @override
+  void initState() {
+    _username = TextEditingController();
+    _password = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _username.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  bool _passwordVisible = false;
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -33,17 +49,13 @@ class _LogInScreenState extends State<LogInScreen> {
               const SizedBox(
                 height: 10,
               ),
-              // Padding(
-              //   padding: EdgeInsets.all(12),
-              //   child: Text(
-              //     "Login",
-              //     style: TextStyle(color: Colors.black, fontSize: ),
-              //   ),
-              // ),
               const SizedBox(height: 75),
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextField(
+                  controller: _username,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -60,8 +72,11 @@ class _LogInScreenState extends State<LogInScreen> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextField(
-                  obscureText: passToggle ? true : false,
-                  decoration: InputDecoration(
+                    controller: _password,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: !_passwordVisible,
+                    decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -71,20 +86,19 @@ class _LogInScreenState extends State<LogInScreen> {
                         style: TextStyle(fontSize: 20),
                       ),
                       prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: InkWell(
+                      suffixIcon: GestureDetector(
                         onTap: () {
-                          if (passToggle == true) {
-                            passToggle == false;
-                          } else {
-                            passToggle == true;
-                          }
-                          setState(() {});
+                          setState(() {
+                            _passwordVisible = !_passwordVisible;
+                          });
                         },
-                        child: passToggle
-                            ? const Icon(CupertinoIcons.eye_slash_fill)
-                            : const Icon(CupertinoIcons.eye_fill),
-                      )),
-                ),
+                        child: Icon(
+                          _passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                      ),
+                    )),
               ),
               const SizedBox(height: 50),
               Padding(
@@ -92,7 +106,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: Material(
-                    color: Color.fromARGB(255, 242, 162, 131),
+                    color: Color.fromARGB(255, 213, 127, 93),
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       onTap: () {
