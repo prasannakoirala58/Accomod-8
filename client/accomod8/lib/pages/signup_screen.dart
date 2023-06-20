@@ -227,6 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
+                    // assigning variable to controllers
                     final firstName = _firstname.text;
                     final lastName = _lastname.text;
                     final email = _email.text;
@@ -235,6 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     final password = _password.text;
                     final confirmPassword = _confirmpassword.text;
 
+                    // sending data to backend
                     NodeAuthProvider().createUser(
                       firstName: firstName,
                       lastName: lastName,

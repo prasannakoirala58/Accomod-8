@@ -10,6 +10,7 @@ class AuthUser {
   final String email;
   final String username;
   final String userType;
+  final bool isVerified;
 
   const AuthUser({
     required this.id,
@@ -19,5 +20,12 @@ class AuthUser {
     required this.email,
     required this.username,
     required this.userType,
+    required this.isVerified,
   });
+
+  // factory AuthUser.fromBackend(User user) => AuthUser(
+  //       id: user.id,
+  //       username: user.username,
+  //       isVerified: user.is_verified,
+  //     );
 }
