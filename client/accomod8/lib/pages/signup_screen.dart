@@ -1,4 +1,4 @@
-// ignore: unused_import
+import 'package:accomod8/services/auth/node_auth_provider.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/pages/login_screen.dart';
@@ -67,12 +67,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 5),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   controller: _firstname,
                   enableSuggestions: false,
                   autocorrect: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: "First Name *",
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.person)),
@@ -80,12 +81,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 5),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   controller: _lastname,
                   enableSuggestions: false,
                   autocorrect: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: "Last Name *",
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.person)),
@@ -93,13 +95,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 5),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   controller: _email,
                   enableSuggestions: false,
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: "Email Address *",
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email)),
@@ -150,14 +153,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                 child: TextField(
                   controller: _username,
                   enableSuggestions: false,
                   autocorrect: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: "User Name",
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.verified_user)),
@@ -167,6 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: TextField(
+                  controller: _password,
                   //yaha we obscure password wala text so that no one can see it
                   obscureText: passToggle ? true : false,
                   decoration: InputDecoration(
@@ -222,6 +227,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
+                    final firstName = _firstname.text;
+                    final lastName = _lastname.text;
+                    final email = _email.text;
+                    final gender = _genderTypeEnum.toString().split('.').last;
+                    final username = _username.text;
+                    final password = _password.text;
+                    final confirmPassword = _confirmpassword.text;
+
+                    NodeAuthProvider().createUser(
+                      firstName: firstName,
+                      lastName: lastName,
+                      email: email,
+                      gender: gender,
+                      username: username,
+                      password: password,
+                      matchingPassword: confirmPassword,
+                      userType: 'user',
+                    );
+
                     // ErrorSnackBar.showErrorSnackBar(context, 'message');
                     //Navigator.push(
                     //context,
