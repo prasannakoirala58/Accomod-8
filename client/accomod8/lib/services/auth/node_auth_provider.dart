@@ -65,8 +65,28 @@ class NodeAuthProvider implements AuthProvider {
   Future<AuthUser> logIn({
     required String username,
     required String password,
-  }) {
-    // TODO: implement logIn
-    throw UnimplementedError();
+  }) async {
+    var loginUserBody = {
+      "username": username,
+      "password": password,
+    };
+    var response = await http.post(
+      Uri.parse(loginUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(loginUserBody),
+    );
+
+    var jsonResponse = jsonDecode(response.body);
+
+    print(jsonResponse);
+
+    final user = currentUser;
+    if (user != null) {
+      print('response');
+      return user;
+    } else {
+      print('cringe');
+      throw 'a';
+    }
   }
 }

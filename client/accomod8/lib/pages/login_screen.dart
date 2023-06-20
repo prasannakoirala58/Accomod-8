@@ -1,4 +1,5 @@
 import 'package:accomod8/pages/signup_screen.dart';
+import 'package:accomod8/services/auth/node_auth_provider.dart';
 import 'package:flutter/material.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -110,6 +111,13 @@ class _LogInScreenState extends State<LogInScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       onTap: () {
+                        final username = _username.text;
+                        final password = _password.text;
+
+                        NodeAuthProvider().logIn(
+                          username: username,
+                          password: password,
+                        );
                         // Navigator.push(
                         //     context,
                         //     MaterialPageRoute(
