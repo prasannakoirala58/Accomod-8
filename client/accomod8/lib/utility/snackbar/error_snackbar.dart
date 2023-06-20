@@ -10,7 +10,7 @@ class ErrorSnackBar {
     BuildContext context,
     String message,
   ) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: GenericSnackBarWidget(
           message: message,
