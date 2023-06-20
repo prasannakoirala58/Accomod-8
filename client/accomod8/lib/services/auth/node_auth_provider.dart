@@ -4,27 +4,37 @@ import 'package:accomod8/services/auth/auth_provider.dart';
 import 'package:accomod8/services/auth/auth_user.dart';
 import 'package:http/http.dart' as http;
 
+import 'auth_exceptions.dart';
+
 class NodeAuthProvider implements AuthProvider {
   @override
   Future<AuthUser> createUser({
-    required String fullName,
+    required String firstName,
+    required String lastName,
     required String email,
-    // required String phoneNumber,
+    required String gender,
+    required String username,
     required String password,
-    // required String matchingPassword,
+    required String matchingPassword,
+    required String userType,
   }) async {
-    var userBody = {
-      'username': fullName,
+    if (matchingPassword != password) {
+      throw PasswordDoesNotMatchAuthException;
+    }
+    var registerUserBody = {
+      'username': username,
       'email': email,
-      // 'phone': phoneNumber,
       'password': password,
-      // 'matching_password': matchingPassword,
+      "typeof_user": userType,
+      "first_name": firstName,
+      "last_name": lastName,
+      "gender": gender,
     };
 
     var response = await http.post(
-      Uri.parse(url),
+      Uri.parse(registerUrl),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(userBody),
+      body: jsonEncode(registerUserBody),
     );
 
     var jsonResponse = jsonDecode(response.body);
@@ -33,10 +43,10 @@ class NodeAuthProvider implements AuthProvider {
 
     final user = currentUser;
     if (user != null) {
-      print(response);
+      print('response');
       return user;
     } else {
-      print(response);
+      print('cringe');
       throw 'a';
     }
   }
@@ -52,7 +62,10 @@ class NodeAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> logIn({required String email, required String password}) {
+  Future<AuthUser> logIn({
+    required String username,
+    required String password,
+  }) {
     // TODO: implement logIn
     throw UnimplementedError();
   }
