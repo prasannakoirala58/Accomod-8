@@ -6,7 +6,7 @@ class SuccessSnackBar {
 
   const SuccessSnackBar({required this.message});
 
-  static showErrorSnackBar(
+  static showSnackBar(
     BuildContext context,
     String message,
   ) {
@@ -17,7 +17,8 @@ class SuccessSnackBar {
           title: 'Success!',
           barColor: const Color(0xFF689F38),
           symbolColor: const Color(0xFF33691E),
-          symbol: 'client/assets/snackbar_icons/check.svg',
+          // 0xFF33691E
+          symbol: 'snackbar_asset/check.svg',
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.transparent,
