@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/pages/login_screen.dart';
 //import 'package:flutter_svg/flutter_svg.dart';

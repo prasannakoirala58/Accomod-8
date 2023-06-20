@@ -1,5 +1,4 @@
 import 'package:accomod8/pages/signup_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LogInScreen extends StatefulWidget {
