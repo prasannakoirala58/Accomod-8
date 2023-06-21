@@ -265,10 +265,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       //   'Yippie',
                       // );
 
-                      ErrorSnackBar.showSnackBar(
-                        context,
-                        'Opsie',
-                      );
+                      // ErrorSnackBar.showSnackBar(
+                      //   context,
+                      //   'Opsie',
+                      // );
 
                       //Navigator.push(
                       //context,
