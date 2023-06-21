@@ -1,5 +1,6 @@
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
+import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 
@@ -125,11 +126,11 @@ class _LogInScreenState extends State<LogInScreen> {
                           //   context,
                           //   'Hmmmmmm',
                           // );
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => HomeScreen(),
-                          //     ));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NavBarRoots(),
+                              ));
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
