@@ -3,19 +3,41 @@ import 'package:accomod8/usersideinterface/favouritesscreen.dart';
 import 'package:accomod8/usersideinterface/settingscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// import 'package:jwt_decoder/jwt_decoder.dart';
 
 class NavBarRoots extends StatefulWidget {
-  const NavBarRoots({super.key});
+  final token;
+  const NavBarRoots({
+    super.key,
+    required this.token,
+  });
 
   @override
   State<NavBarRoots> createState() => _NavBarRootsState();
 }
 
 class _NavBarRootsState extends State<NavBarRoots> {
+  late String navToken;
+  late String email;
+  @override
+  void initState() {
+    super.initState();
+    navToken = widget.token;
+    // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+    // email = jwtDecodedToken['username'];
+  }
+
+  _NavBarRootsState() {
+    // finalbartoken=super.widget.token;
+    // required super.token;
+  }
+
   int _selectedIndex = 0;
   final _screens = [
     //Explore screen
-    ExploreScreen(),
+    ExploreScreen(
+      token: 'navToken',
+    ),
     //Add later on
     Container(),
     //Favourite
@@ -43,12 +65,13 @@ class _NavBarRootsState extends State<NavBarRoots> {
               _selectedIndex = Index;
             });
           },
-          items: const [
+          items: [
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.search,
                 size: 25,
               ),
+              // label: email,
               label: "Explore",
             ),
             BottomNavigationBarItem(
