@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:accomod8/config.dart';
 import 'package:accomod8/services/auth/auth_provider.dart';
-import 'package:accomod8/services/auth/auth_user.dart';
+// import 'package:accomod8/services/auth/auth_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_exceptions.dart';
@@ -10,7 +10,7 @@ class NodeAuthProvider implements AuthProvider {
   static late SharedPreferences prefs;
 
   @override
-  Future<AuthUser> createUser({
+  Future<String> createUser({
     required String firstName,
     required String lastName,
     required String email,
@@ -43,34 +43,38 @@ class NodeAuthProvider implements AuthProvider {
 
     print(jsonResponse);
 
-    final user = currentUser;
-    if (user != null) {
-      print('response');
-      return user;
-    } else {
-      print('cringe');
-      throw 'a';
-    }
+    return jsonResponse;
+    // final user = currentUser;
+    // if (user != null) {
+    //   print('response');
+    //   return user;
+    // } else {
+    //   print('cringe');
+    //   throw 'a';
   }
 
-  // @override
-  // AuthUser? get currentUser async {
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   SharedPreferences pref = await SharedPreferences.getInstance();
+// @override
+// AuthUser? get currentUser async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   SharedPreferences pref = await SharedPreferences.getInstance();
 
-  //   var username = pref.getString('username');
-  //   final user = username.toString();
-  //   if (user != null) {
-  //     return user;
-  //   } else {
-  //     return null;
-  //   }
-  //   // const MyApp({@required token, Key? key,}):super(key: key);
-  // }
+//   var username = pref.getString('username');
+//   final user = username.toString();
+//   if (user != null) {
+//     return user;
+//   } else {
+//     return null;
+//   }
+//   // const MyApp({@required token, Key? key,}):super(key: key);
+// }
 
-  @override
-  // TODO: implement currentUser
-  AuthUser? get currentUser => throw UnimplementedError();
+// @override
+// AuthUser? get currentUser async {
+//   final user = prefs.getString('username');
+//   if (user != null){
+//     return <AuthUser>;
+//   }
+// }
 
   @override
   Future<void> initialize() async {
@@ -78,7 +82,7 @@ class NodeAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> logIn({
+  Future<String> logIn({
     required String username,
     required String password,
   }) async {
@@ -107,15 +111,23 @@ class NodeAuthProvider implements AuthProvider {
       );
       print(token);
       print('login');
+      return token;
+      // final user = prefs.getString('username');
+      // return user;
     }
 
-    final user = currentUser;
-    if (user != null) {
-      print('response');
-      return user;
-    } else {
-      print('cringe');
-      throw 'a';
-    }
+    //   final user = currentUser;
+    //   if (user != null) {
+    //     print('response');
+    //     return user;
+    //   } else {
+    //     print('cringe');
+    //     throw 'a';
+    //   }
+    // }
+
+    // @override
+    // // TODO: implement currentUser
+    // AuthUser? get currentUser => throw UnimplementedError();
   }
 }

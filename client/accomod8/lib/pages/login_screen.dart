@@ -16,6 +16,7 @@ class LogInScreen extends StatefulWidget {
 class _LogInScreenState extends State<LogInScreen> {
   late final TextEditingController _username;
   late final TextEditingController _password;
+  late final String _loginToken;
 
   @override
   void initState() {
@@ -115,7 +116,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       color: const Color.fromARGB(255, 213, 127, 93),
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
-                        onTap: () {
+                        onTap: () async {
                           final username = _username.text;
                           final password = _password.text;
 
@@ -127,10 +128,12 @@ class _LogInScreenState extends State<LogInScreen> {
                             throw FieldsCannotBeEmptyException;
                           }
                           try {
-                            NodeAuthProvider().logIn(
+                            _loginToken = await NodeAuthProvider().logIn(
                               username: username,
                               password: password,
                             );
+                            // print('ok data aayo');
+                            // print(_loginToken);
                           } on WrongCredentialsAuthException {
                             ErrorSnackBar.showSnackBar(
                               context,
@@ -149,7 +152,9 @@ class _LogInScreenState extends State<LogInScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => NavBarRoots(),
+                                builder: (context) => NavBarRoots(
+                                  token: _loginToken,
+                                ),
                               ));
                         },
                         child: const Padding(
