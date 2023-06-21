@@ -4,6 +4,8 @@ import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 
+import '../services/auth/auth_exceptions.dart';
+
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
 
@@ -117,11 +119,29 @@ class _LogInScreenState extends State<LogInScreen> {
                           final username = _username.text;
                           final password = _password.text;
 
-                          NodeAuthProvider().logIn(
-                            username: username,
-                            password: password,
-                          );
-
+                          if (username.isEmpty && password.isEmpty) {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              'Fields cannot be empty',
+                            );
+                            throw FieldsCannotBeEmptyException;
+                          }
+                          try {
+                            NodeAuthProvider().logIn(
+                              username: username,
+                              password: password,
+                            );
+                          } on WrongCredentialsAuthException {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              'Wrong Credentials',
+                            );
+                          } on Exception catch (e) {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              e.toString(),
+                            );
+                          }
                           // ErrorSnackBar.showSnackBar(
                           //   context,
                           //   'Hmmmmmm',
