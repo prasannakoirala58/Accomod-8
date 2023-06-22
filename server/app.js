@@ -49,6 +49,8 @@ app.use('/api/analytics', analyticsRouter);
 //   });
 // });
 
+// app.use('http://ip:5000/api/');
+
 app.use((err, req, res, next) => {
   err.status = err.status || 500;
   err.message = err.message || 'Internal Server Error';
