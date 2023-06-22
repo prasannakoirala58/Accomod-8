@@ -229,7 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   color: const Color.fromARGB(255, 242, 162, 131),
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       final firstName = _firstname.text;
                       final lastName = _lastname.text;
                       final email = _email.text;
@@ -238,43 +238,74 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final password = _password.text;
                       final confirmPassword = _confirmpassword.text;
 
-                      // try {
-                      NodeAuthProvider().createUser(
-                        firstName: firstName,
-                        lastName: lastName,
-                        email: email,
-                        gender: gender,
-                        username: username,
-                        password: password,
-                        matchingPassword: confirmPassword,
-                        userType: 'user',
-                      );
-                      // } on PasswordDoesNotMatchAuthException {
-                      //   ErrorSnackBar.showSnackBar(
-                      //     context,
-                      //     'Passwords donot match',
-                      //   );
-                      // } on Exception {
-                      //   ErrorSnackBar.showSnackBar(
-                      //     context,
-                      //     'Authentication error',
-                      //   );
-                      // }
-                      // SuccessSnackBar.showSnackBar(
-                      //   context,
-                      //   'Yippie',
-                      // );
+                      if (firstName.isEmpty ||
+                          lastName.isEmpty ||
+                          email.isEmpty ||
+                          gender.isEmpty ||
+                          username.isEmpty ||
+                          password.isEmpty ||
+                          confirmPassword.isEmpty) {
+                        ErrorSnackBar.showSnackBar(
+                          context,
+                          'Fields cannot be empty',
+                        );
+                        throw FieldsCannotBeEmptyException;
+                      }
+                      try {
+                        final response = await NodeAuthProvider().createUser(
+                          firstName: firstName,
+                          lastName: lastName,
+                          email: email,
+                          gender: gender,
+                          username: username,
+                          password: password,
+                          matchingPassword: confirmPassword,
+                          userType: 'user',
+                        );
 
-                      ErrorSnackBar.showSnackBar(
-                        context,
-                        'Opsie',
-                      );
-
-                      //Navigator.push(
-                      //context,
-                      //MaterialPageRoute(
-                      //builder: (context) => SignUpScreen(),
-                      //)); //Navigator.push(context, MaterialPageRoute(builder: (context)));
+                        if (response == true) {
+                          SuccessSnackBar.showSnackBar(
+                            context,
+                            'Signed up sucessfully',
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LogInScreen(),
+                            ),
+                          );
+                        } else {
+                          ErrorSnackBar.showSnackBar(
+                            context,
+                            'Username and email should be unique',
+                          );
+                        }
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => const LogInScreen(),
+                        //     ));
+                        //Navigator.push(
+                        //context,
+                        //MaterialPageRoute(
+                        //builder: (context) => SignUpScreen(),
+                        //)); //Navigator.push(context, MaterialPageRoute(builder: (context)));
+                        // } on FieldsCannotBeEmptyException catch (_) {
+                        //   ErrorSnackBar.showSnackBar(
+                        //     context,
+                        //     'Fields cannot be empty',
+                        //   );
+                      } on PasswordDoesNotMatchAuthException {
+                        ErrorSnackBar.showSnackBar(
+                          context,
+                          'Password does not match',
+                        );
+                      } on Exception catch (e) {
+                        ErrorSnackBar.showSnackBar(
+                          context,
+                          e.toString(),
+                        );
+                      }
                     },
                     child: const Padding(
                       padding:

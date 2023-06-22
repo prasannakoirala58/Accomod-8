@@ -42,12 +42,12 @@ app.use('/api/hostels', hostelRouter);
 app.use('/api/analytics', analyticsRouter);
 
 // For dev purposes
-// app.use('/', (req, res, next) => {
-//   res.status(200).send({
-//     status: 'success',
-//     data: 'Motu laptop jindabaad!!!',
-//   });
-// });
+app.use('/', (req, res, next) => {
+  res.status(200).send({
+    status: 'success',
+    data: 'Motu laptop jindabaad!!!',
+  });
+});
 
 app.use((err, req, res, next) => {
   err.status = err.status || 500;
