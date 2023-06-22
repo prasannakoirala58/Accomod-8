@@ -9,15 +9,26 @@ const crypto = require('crypto');
 const sendEmail = require('../utils/mailing');
 const cloudinary = require('cloudinary');
 const multer = require('multer');
-const {
-  CLOUDINARY_NAME,
-  CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET,
-} = require('../utils/config');
+const { CreateError } = require('../utils/CreateError');
 
 // Create multer storage configuration
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const multerStorage = multer.memoryStorage();
+
+// Multer filter for filtering only images
+const multerFilter = (req, file, cb) => {
+  // console.log(`Yo multer filter ley gareko ho hai: ${JSON.stringify(file)}`);
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(CreateError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+// upload for multer
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
 
 exports.uploadUserPhoto = upload.fields([
   { name: 'profile_picture', maxCount: 1 },
@@ -84,13 +95,6 @@ exports.register_user = async (req, res, next) => {
   try {
     const body = req.body;
     const { profile_picture, document } = req.files || {};
-
-    // Cloudinary configuration
-    await cloudinary.v2.config({
-      cloud_name: CLOUDINARY_NAME,
-      api_key: CLOUDINARY_API_KEY,
-      api_secret: CLOUDINARY_API_SECRET,
-    });
 
     let profileCloud = null;
     let documentCloud = null;
