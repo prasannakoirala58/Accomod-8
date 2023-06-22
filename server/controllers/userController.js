@@ -158,7 +158,10 @@ exports.register_user = async (req, res, next) => {
     });
 
     const savedUser = await user.save();
-    res.status(200).json(savedUser);
+    res.status(200).json({
+      status: 'success',
+      data: savedUser,
+    });
   } catch (err) {
     // console.log("Yo cloudinary ko error hota?", err);
     next(err);
