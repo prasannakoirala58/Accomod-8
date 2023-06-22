@@ -23,7 +23,7 @@ class GenericSnackBarWidget extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          height: 90,
+          height: 70,
           decoration: BoxDecoration(
             //Color(0xFFC72C41)
             color: barColor,
@@ -68,10 +68,13 @@ class GenericSnackBarWidget extends StatelessWidget {
               bottomLeft: Radius.circular(20),
             ),
             child: SvgPicture.asset(
-              'client/assets/snackbar_icons/bubbles.svg',
+              'snackbar_asset/bubbles.svg',
               height: 48,
               width: 40,
-              colorFilter: ColorFilter.mode(symbolColor, BlendMode.src),
+              colorFilter: ColorFilter.mode(
+                symbolColor,
+                BlendMode.srcATop,
+              ),
             ),
           ),
         ),
@@ -82,16 +85,22 @@ class GenericSnackBarWidget extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               SvgPicture.asset(
-                'client/assets/snackbar_icons/fail.svg',
+                'snackbar_asset/fail.svg',
                 height: 40,
+                colorFilter: ColorFilter.mode(
+                  symbolColor,
+                  BlendMode.srcATop,
+                ),
               ),
               Positioned(
                 top: 10,
                 child: SvgPicture.asset(
                   symbol,
                   height: 16,
-                  colorFilter:
-                      const ColorFilter.mode(Colors.white, BlendMode.src),
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcATop,
+                  ),
                 ),
               ),
             ],
