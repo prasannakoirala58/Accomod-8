@@ -41,11 +41,14 @@ const createResetPasswordToken = async () => {
 exports.get_users = async (req, res, next) => {
   try {
     const users = await User.find({});
+    console.log(users);
     res.status(200).json(users);
   } catch (err) {
     next(err);
-  }
+  } 
 };
+
+
 
 /*
     @route GET /api/users/:id
@@ -109,14 +112,16 @@ exports.register_user = async (req, res, next) => {
     });
 
     const savedUser = await user.save();
-    res.json(savedUser);
+    res.status(200).json(savedUser);
   } catch (err) {
     next(err);
   }
 };
 
+
+
 /*
-    @route POST /api/users/login
+    @route POST /api/users/logi
     @desc Login a user
     @access Public
 */
