@@ -26,7 +26,7 @@ abstract class AuthProvider {
     required String password,
   });
 
-  Future<String> createUser({
+  Future<bool> createUser({
     required String firstName,
     required String lastName,
     required String email,

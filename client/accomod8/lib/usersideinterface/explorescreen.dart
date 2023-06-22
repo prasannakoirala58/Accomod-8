@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ExploreScreen extends StatelessWidget {
-  final token;
+  final String token;
   const ExploreScreen({
     super.key,
     required this.token,
