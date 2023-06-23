@@ -1,3 +1,6 @@
+import 'package:http_parser/http_parser.dart';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:accomod8/config.dart';
 import 'package:accomod8/services/auth/auth_provider.dart';
@@ -19,10 +22,50 @@ class NodeAuthProvider implements AuthProvider {
     required String password,
     required String matchingPassword,
     required String userType,
+    required File image,
+    required File document,
   }) async {
     if (matchingPassword != password) {
       throw PasswordDoesNotMatchAuthException;
     }
+    Dio dio = Dio();
+    String photoFileName = image.path.split('/').last;
+    String documentFileName = document.path.split('/').last;
+
+    FormData formData = FormData.fromMap(
+      {
+        'username': username,
+        'email': email,
+        'password': password,
+        'typeof_user': userType,
+        'first_name': firstName,
+        'last_name': lastName,
+        'gender': gender,
+        'profile_picture': await MultipartFile.fromFile(
+          image.path,
+          filename: photoFileName,
+          contentType: MediaType('image', 'png'),
+        ),
+        'document': await MultipartFile.fromFile(
+          document.path,
+          filename: documentFileName,
+          contentType: MediaType('image', 'png'),
+        ),
+      },
+    );
+    Response formDataresponse = await dio.post(
+      registerUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+
+    var formDataJsonResponse = jsonDecode(formDataresponse.data);
+    print(formDataJsonResponse);
+
     var registerUserBody = {
       'username': username,
       'email': email,

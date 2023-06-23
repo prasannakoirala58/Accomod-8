@@ -1,5 +1,7 @@
 // import 'package:accomod8/services/auth/auth_user.dart';
 
+import 'dart:io';
+
 abstract class AuthProvider {
   Future<void> initialize();
 
@@ -35,5 +37,7 @@ abstract class AuthProvider {
     required String password,
     required String matchingPassword,
     required String userType,
+    required File image,
+    required File document,
   });
 }
