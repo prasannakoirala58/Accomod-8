@@ -1,11 +1,39 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 const User = require('../models/user');
 const Hostel = require('../models/hostel');
 const Review = require('../models/review');
 const crypto = require('crypto');
 const sendEmail = require('../utils/mailing');
 const cloudinary = require('cloudinary');
+const multer = require('multer');
+const { CreateError } = require('../utils/CreateError');
+
+// Create multer storage configuration
+const multerStorage = multer.memoryStorage();
+
+// Multer filter for filtering only images
+const multerFilter = (req, file, cb) => {
+  // console.log(`Yo multer filter ley gareko ho hai: ${JSON.stringify(file)}`);
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(CreateError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+// upload for multer
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadUserPhoto = upload.fields([
+  { name: 'profile_picture', maxCount: 1 },
+  { name: 'document', maxCount: 2 },
+]);
 
 /*
     @desc gets token from request header
@@ -25,10 +53,7 @@ const getToken = (req) => {
 */
 const createResetPasswordToken = async () => {
   const resetToken = crypto.randomBytes(20).toString('hex');
-  const reset_password_token = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
+  const reset_password_token = crypto.createHash('sha256').update(resetToken).digest('hex');
   const reset_token_expires = Date.now() + 10 * 60 * 1000;
   return { resetToken, reset_password_token, reset_token_expires };
 };
@@ -69,23 +94,47 @@ exports.get_user = async (req, res, next) => {
 exports.register_user = async (req, res, next) => {
   try {
     const body = req.body;
-    // console.log(body);
+    const { profile_picture, document } = req.files || {};
 
-    // const profilecloud = await cloudinary.v2.uploader.upload(body.profile_picture, {
-    //     folder: "avatars",
-    //     width: 1020,
-    //     crop: "scale",
-    //   });
-    // const documentcloud = await cloudinary.v2.uploader.upload(body.document, {
-    //     folder: "studentdocuments",
-    //     width: 1020,
-    //     crop: "scale",
-    //   });
+    let profileCloud = null;
+    let documentCloud = null;
+
+    if (profile_picture) {
+      // Create a temporary file path
+      const tempPhotoPath = path.join(__dirname, '../photos/tempPhoto.jpg');
+
+      // Write the buffer to the temporary file
+      fs.writeFileSync(tempPhotoPath, profile_picture[0].buffer);
+
+      // Cloudinary upload profile picture
+      profileCloud = await cloudinary.v2.uploader.upload(tempPhotoPath, {
+        folder: 'avatars',
+        public_id: `profile_${Date.now()}`,
+      });
+
+      // Delete the temporary file
+      fs.unlinkSync(tempPhotoPath);
+    }
+
+    if (document) {
+      // Create a temporary file path
+      const tempDocPath = path.join(__dirname, '../photos/tempDoc.jpg');
+
+      // Write the buffer to the temporary file
+      fs.writeFileSync(tempDocPath, document[0].buffer);
+
+      // Cloudinary upload document
+      documentCloud = await cloudinary.v2.uploader.upload(tempDocPath, {
+        folder: 'documents',
+        public_id: `document_${Date.now()}`,
+      });
+
+      // Delete the temporary file
+      fs.unlinkSync(tempDocPath);
+    }
 
     const saltRounds = 10;
     const passwordHash = bcrypt.hashSync(body.password, saltRounds);
-
-    // console.log(req.body.profile.first_name)
 
     const user = new User({
       username: body.username,
@@ -101,16 +150,20 @@ exports.register_user = async (req, res, next) => {
         gender: body.gender,
         phone_number: body.phone_number,
         address: body.address,
-        // profile_picture: profilecloud.secure_url,
-        // document: documentcloud.secure_url || null,
+        profile_picture: profileCloud ? profileCloud.secure_url : null,
+        document: documentCloud ? documentCloud.secure_url : null,
       },
       reviews: [],
       hostel_listings: [],
     });
 
     const savedUser = await user.save();
-    res.json(savedUser);
+    res.status(200).json({
+      status: 'success',
+      data: savedUser,
+    });
   } catch (err) {
+    // console.log("Yo cloudinary ko error hota?", err);
     next(err);
   }
 };

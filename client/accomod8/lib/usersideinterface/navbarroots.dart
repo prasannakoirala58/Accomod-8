@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // import 'package:jwt_decoder/jwt_decoder.dart';
 
 class NavBarRoots extends StatefulWidget {
-  final token;
+  final String token;
   const NavBarRoots({
     super.key,
     required this.token,
@@ -33,18 +33,18 @@ class _NavBarRootsState extends State<NavBarRoots> {
   }
 
   int _selectedIndex = 0;
-  final _screens = [
-    //Explore screen
-    ExploreScreen(
-      token: 'navToken',
-    ),
-    //Add later on
-    Container(),
-    //Favourite
-    FavouriteScreen(),
-    //Setting Screen
-    SettingScreen(),
-  ];
+  List<Widget> get _screens => [
+        //Explore screen
+        ExploreScreen(
+          token: widget.token,
+        ),
+        //Add later on
+        Container(),
+        //Favourite
+        FavouriteScreen(),
+        //Setting Screen
+        SettingScreen(),
+      ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

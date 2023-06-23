@@ -10,7 +10,7 @@ class NodeAuthProvider implements AuthProvider {
   static late SharedPreferences prefs;
 
   @override
-  Future<String> createUser({
+  Future<bool> createUser({
     required String firstName,
     required String lastName,
     required String email,
@@ -40,10 +40,22 @@ class NodeAuthProvider implements AuthProvider {
     );
 
     var jsonResponse = jsonDecode(response.body);
-
     print(jsonResponse);
+    // final keyR = jsonResponse['message:'];
+    // print('Recived:$keyR');
+    final successStatus = jsonResponse['success'];
+    // print("resp:$resp");
+    // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(jsonResponse);
+    // print('res:$jwtDecodedToken');
 
-    return jsonResponse;
+    // factory; NodeAuthProvider.fromJson(Map<String, dynamic>jsonData)=> NodeAuthProvider(
+    //   status: jsonData['success'] as bool,
+    // );
+    // final successResponse = jwtDecodedToken['success'];
+
+    // print(successResponse);
+
+    return successStatus;
     // final user = currentUser;
     // if (user != null) {
     //   print('response');

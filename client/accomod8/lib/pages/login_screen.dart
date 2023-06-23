@@ -2,6 +2,7 @@ import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
 import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
+import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth/auth_exceptions.dart';
@@ -120,7 +121,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           final username = _username.text;
                           final password = _password.text;
 
-                          if (username.isEmpty && password.isEmpty) {
+                          if (username.isEmpty || password.isEmpty) {
                             ErrorSnackBar.showSnackBar(
                               context,
                               'Fields cannot be empty',
@@ -132,6 +133,18 @@ class _LogInScreenState extends State<LogInScreen> {
                               username: username,
                               password: password,
                             );
+                            SuccessSnackBar.showSnackBar(
+                              context,
+                              'Logged in successfully',
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NavBarRoots(
+                                  token: _loginToken,
+                                ),
+                              ),
+                            );
                             // print('ok data aayo');
                             // print(_loginToken);
                           } on WrongCredentialsAuthException {
@@ -139,6 +152,11 @@ class _LogInScreenState extends State<LogInScreen> {
                               context,
                               'Wrong Credentials',
                             );
+                            // } on FieldsCannotBeEmptyException catch (_) {
+                            //   ErrorSnackBar.showSnackBar(
+                            //     context,
+                            //     'Fields cannot be empty',
+                            //   );
                           } on Exception catch (e) {
                             ErrorSnackBar.showSnackBar(
                               context,
@@ -149,13 +167,6 @@ class _LogInScreenState extends State<LogInScreen> {
                           //   context,
                           //   'Hmmmmmm',
                           // );
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NavBarRoots(
-                                  token: _loginToken,
-                                ),
-                              ));
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
