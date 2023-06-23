@@ -1,7 +1,10 @@
 import 'package:accomod8/pages/login_screen.dart';
+import 'package:accomod8/services/auth/node_auth_provider.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NodeAuthProvider().initialize();
   runApp(const MyApp());
 }
 

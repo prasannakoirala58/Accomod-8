@@ -1,7 +1,11 @@
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
+import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
+import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
+
+import '../services/auth/auth_exceptions.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -13,6 +17,7 @@ class LogInScreen extends StatefulWidget {
 class _LogInScreenState extends State<LogInScreen> {
   late final TextEditingController _username;
   late final TextEditingController _password;
+  late final String _loginToken;
 
   @override
   void initState() {
@@ -112,24 +117,56 @@ class _LogInScreenState extends State<LogInScreen> {
                       color: const Color.fromARGB(255, 213, 127, 93),
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
-                        onTap: () {
+                        onTap: () async {
                           final username = _username.text;
                           final password = _password.text;
 
-                          NodeAuthProvider().logIn(
-                            username: username,
-                            password: password,
-                          );
-
+                          if (username.isEmpty || password.isEmpty) {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              'Fields cannot be empty',
+                            );
+                            throw FieldsCannotBeEmptyException;
+                          }
+                          try {
+                            _loginToken = await NodeAuthProvider().logIn(
+                              username: username,
+                              password: password,
+                            );
+                            SuccessSnackBar.showSnackBar(
+                              context,
+                              'Logged in successfully',
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NavBarRoots(
+                                  token: _loginToken,
+                                ),
+                              ),
+                            );
+                            // print('ok data aayo');
+                            // print(_loginToken);
+                          } on WrongCredentialsAuthException {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              'Wrong Credentials',
+                            );
+                            // } on FieldsCannotBeEmptyException catch (_) {
+                            //   ErrorSnackBar.showSnackBar(
+                            //     context,
+                            //     'Fields cannot be empty',
+                            //   );
+                          } on Exception catch (e) {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              e.toString(),
+                            );
+                          }
                           // ErrorSnackBar.showSnackBar(
                           //   context,
                           //   'Hmmmmmm',
                           // );
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => HomeScreen(),
-                          //     ));
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
