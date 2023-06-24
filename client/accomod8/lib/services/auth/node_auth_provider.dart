@@ -163,11 +163,11 @@ class NodeAuthProvider implements AuthProvider {
 
   @override
   Future<String> logIn({
-    required String username,
+    required String email,
     required String password,
   }) async {
     var loginUserBody = {
-      "username": username,
+      "email": email,
       "password": password,
     };
     var response = await http.post(
@@ -180,18 +180,18 @@ class NodeAuthProvider implements AuthProvider {
 
     print(jsonResponse);
 
-    if (jsonResponse['token'] == null) {
+    if (jsonResponse['status'] == 'success') {
+      var token = jsonResponse['data'];
+      // prefs.setString(
+      //   'data',
+      //   token,
+      // );
+      print(token.toString());
+      print('login');
+      return token.toString();
+    } else {
       print('no token');
       throw WrongCredentialsAuthException();
-    } else {
-      var token = jsonResponse['token'];
-      prefs.setString(
-        'token',
-        token,
-      );
-      print(token);
-      print('login');
-      return token;
       // final user = prefs.getString('username');
       // return user;
     }
