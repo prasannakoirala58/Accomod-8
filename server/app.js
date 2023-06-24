@@ -22,7 +22,7 @@ mongoose
     logger.error('error connecting to MongoDB: ', error.message);
   });
 
-// app.use(cors({credentials: true, origin: 'https://dormden.me'}));
+// app.use(cors({credentials: true, origin: 'https://accomodate.me'}));
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(express.json({ limit: '25mb' }));
 app.use(cookie_parser());
@@ -42,14 +42,12 @@ app.use('/api/hostels', hostelRouter);
 app.use('/api/analytics', analyticsRouter);
 
 // For dev purposes
-app.use('/', (req, res, next) => {
-  res.status(200).send({
-    status: 'success',
-    data: 'Motu laptop jindabaad!!!',
-  });
-});
-
-// app.use('http://ip:5000/api/');
+// app.use('/', (req, res, next) => {
+//   res.status(200).send({
+//     status: 'success',
+//     data: 'Motu laptop jindabaad!!!',
+//   });
+// });
 
 app.use((err, req, res, next) => {
   err.status = err.status || 500;

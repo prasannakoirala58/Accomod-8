@@ -1,11 +1,21 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 const User = require('../models/user');
 const Hostel = require('../models/hostel');
 const Review = require('../models/review');
 const crypto = require('crypto');
 const sendEmail = require('../utils/mailing');
 const cloudinary = require('cloudinary');
+const upload = require('../utils/multerConfig');
+const { handleCloudinaryUpload, deleteFromCloudinary } = require('../utils/cloudinaryUtils');
+
+// Multer middleware for uploading user photo and document
+exports.uploadUserPhoto = upload.fields([
+  { name: 'profile_picture', maxCount: 1 },
+  { name: 'document', maxCount: 2 },
+]);
 
 /*
     @desc gets token from request header
@@ -25,10 +35,7 @@ const getToken = (req) => {
 */
 const createResetPasswordToken = async () => {
   const resetToken = crypto.randomBytes(20).toString('hex');
-  const reset_password_token = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
+  const reset_password_token = crypto.createHash('sha256').update(resetToken).digest('hex');
   const reset_token_expires = Date.now() + 10 * 60 * 1000;
   return { resetToken, reset_password_token, reset_token_expires };
 };
@@ -67,27 +74,37 @@ exports.get_user = async (req, res, next) => {
     @access Public
 */
 exports.register_user = async (req, res, next) => {
+  let user;
   try {
     const body = req.body;
-    // console.log(body);
+    const { profile_picture, document } = req.files || {};
+    console.log(body.username);
 
-    // const profilecloud = await cloudinary.v2.uploader.upload(body.profile_picture, {
-    //     folder: "avatars",
-    //     width: 1020,
-    //     crop: "scale",
-    //   });
-    // const documentcloud = await cloudinary.v2.uploader.upload(body.document, {
-    //     folder: "studentdocuments",
-    //     width: 1020,
-    //     crop: "scale",
-    //   });
+    let profileCloudUrl = null;
+    let documentCloudUrl = null;
+
+    if (profile_picture) {
+      profileCloudUrl = await handleCloudinaryUpload(
+        profile_picture[0].buffer,
+        'tempPhoto.jpg',
+        'avatars',
+        `${body.username}_profile}`
+      );
+    }
+
+    if (document) {
+      documentCloudUrl = await handleCloudinaryUpload(
+        document[0].buffer,
+        'tempDoc.jpg',
+        'documents',
+        `document_${Date.now()}`
+      );
+    }
 
     const saltRounds = 10;
     const passwordHash = bcrypt.hashSync(body.password, saltRounds);
 
-    // console.log(req.body.profile.first_name)
-
-    const user = new User({
+    user = new User({
       username: body.username,
       email: body.email,
       passwordHash: passwordHash,
@@ -101,16 +118,30 @@ exports.register_user = async (req, res, next) => {
         gender: body.gender,
         phone_number: body.phone_number,
         address: body.address,
-        // profile_picture: profilecloud.secure_url,
-        // document: documentcloud.secure_url || null,
+        profile_picture: profileCloudUrl ? profileCloudUrl : null,
+        document: documentCloudUrl ? documentCloudUrl : null,
       },
       reviews: [],
       hostel_listings: [],
     });
 
     const savedUser = await user.save();
-    res.json(savedUser);
+    res.status(200).json({
+      status: 'success',
+      data: savedUser,
+    });
   } catch (err) {
+    // console.log("Yo cloudinary ko error hota?", err);
+    if (user) {
+      // If there was an error saving the user, delete the uploaded profile picture and document from Cloudinary
+      if (user.profile.profile_picture) {
+        await deleteFromCloudinary(user.profile.profile_picture);
+      }
+      if (user.profile.document) {
+        await deleteFromCloudinary(user.profile.document);
+      }
+    }
+
     next(err);
   }
 };
@@ -122,9 +153,9 @@ exports.register_user = async (req, res, next) => {
 */
 exports.login_user = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
 
     const correctPassword =
       user === null ? false : await bcrypt.compare(password, user.passwordHash);
@@ -151,7 +182,15 @@ exports.login_user = async (req, res, next) => {
     res
       .status(200)
       .cookie('token', token, options)
-      .send({ token, username: user.username, id: user._id });
+      .send({
+        status: 'success',
+        data: {
+          id: user._id,
+          token,
+          username: user.username,
+          profile_picture: user.profile.profile_picture,
+        },
+      });
   } catch (err) {
     next(err);
   }
@@ -166,26 +205,56 @@ exports.update_user = async (req, res, next) => {
   try {
     const body = req.body;
     console.log('body passed', body);
-    let SecureURL = '';
+    let profileSecureURL = '';
+    let documentSecureURL = '';
+
     const token = getToken(req);
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
+
     const user = await User.findById(decodedToken.id);
 
     if (body.profile_picture) {
       if (typeof body.profile_picture === 'string') {
-        SecureURL = body.profile_picture;
+        profileSecureURL = body.profile_picture;
       } else {
-        const profilecloud = await cloudinary.v2.uploader.upload(body.profile_picture, {
+        const profileCloud = await cloudinary.v2.uploader.upload(body.profile_picture, {
           folder: 'avatars',
           width: 1020,
           crop: 'scale',
         });
-        SecureURL = profilecloud.secure_url;
+
+        // Delete the existing profile picture from Cloudinary if it exists
+        if (user.profile.profile_picture) {
+          const publicId = user.profile.profile_picture.split('/avatars/')[1].split('.')[0];
+          await cloudinary.v2.uploader.destroy(`avatars/${publicId}`);
+        }
+
+        profileSecureURL = profileCloud.secure_url;
       }
     }
+
+    if (body.document) {
+      if (typeof body.document === 'string') {
+        documentSecureURL = body.document;
+      } else {
+        const documentCloud = await cloudinary.v2.uploader.upload(body.document, {
+          folder: 'documents',
+          public_id: `document_${Date.now()}`,
+        });
+
+        // Delete the existing document from Cloudinary if it exists
+        if (user.profile.document) {
+          const publicId = user.profile.document.split('/documents/')[1].split('.')[0];
+          await cloudinary.v2.uploader.destroy(`documents/${publicId}`);
+        }
+
+        documentSecureURL = documentCloud.secure_url;
+      }
+    }
+
     const data = {
       username: body.username,
       email: body.email,
@@ -196,17 +265,18 @@ exports.update_user = async (req, res, next) => {
         gender: body.gender,
         phone_number: body.phone_number,
         address: body.address,
-        profile_picture: SecureURL,
+        profile_picture: profileSecureURL || user.profile.profile_picture,
+        document: documentSecureURL || user.profile.document,
       },
     };
 
-    /* if user is updating username we have to update the token */
     if (user) {
       const updatedUser = await User.findByIdAndUpdate(req.params.id, data, {
         new: true,
         runValidators: true,
         useFindAndModify: false,
       });
+
       res.status(200).json(updatedUser);
     }
   } catch (err) {
