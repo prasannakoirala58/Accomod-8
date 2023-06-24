@@ -15,20 +15,20 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-  late final TextEditingController _username;
+  late final TextEditingController _email;
   late final TextEditingController _password;
   late final String _loginToken;
 
   @override
   void initState() {
-    _username = TextEditingController();
+    _email = TextEditingController();
     _password = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _username.dispose();
+    _email.dispose();
     _password.dispose();
     super.dispose();
   }
@@ -61,7 +61,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: TextField(
-                    controller: _username,
+                    controller: _email,
                     enableSuggestions: false,
                     autocorrect: false,
                     decoration: InputDecoration(
@@ -70,7 +70,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12)),
                         label: const Text(
-                          "Enter Username",
+                          "Enter Email",
                           style: TextStyle(fontSize: 20),
                         ),
                         prefixIcon: const Icon(Icons.person)),
@@ -118,10 +118,10 @@ class _LogInScreenState extends State<LogInScreen> {
                       borderRadius: BorderRadius.circular(12),
                       child: InkWell(
                         onTap: () async {
-                          final username = _username.text;
+                          final email = _email.text;
                           final password = _password.text;
 
-                          if (username.isEmpty || password.isEmpty) {
+                          if (email.isEmpty || password.isEmpty) {
                             ErrorSnackBar.showSnackBar(
                               context,
                               'Fields cannot be empty',
@@ -130,7 +130,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           }
                           try {
                             _loginToken = await NodeAuthProvider().logIn(
-                              username: username,
+                              email: email,
                               password: password,
                             );
                             SuccessSnackBar.showSnackBar(

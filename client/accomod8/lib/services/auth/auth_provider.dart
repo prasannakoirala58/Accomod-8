@@ -24,7 +24,7 @@ abstract class AuthProvider {
   // });
 
   Future<String> logIn({
-    required String username,
+    required String email,
     required String password,
   });
 
