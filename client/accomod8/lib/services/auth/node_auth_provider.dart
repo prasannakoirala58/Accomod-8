@@ -1,4 +1,4 @@
-import 'package:http_parser/http_parser.dart';
+// import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'dart:convert';
@@ -13,7 +13,7 @@ class NodeAuthProvider implements AuthProvider {
   static late SharedPreferences prefs;
 
   @override
-  Future<bool> createUser({
+  Future<String> createUser({
     required String firstName,
     required String lastName,
     required String email,
@@ -29,9 +29,12 @@ class NodeAuthProvider implements AuthProvider {
       throw PasswordDoesNotMatchAuthException;
     }
     Dio dio = Dio();
-    String photoFileName = image.path.split('/').last;
-    String documentFileName = document.path.split('/').last;
+    // String photoFileName = image.path.split('/').last;
+    // String documentFileName = document.path.split('/').last;
 
+    // print('photoFile:$photoFileName, documentFile:$documentFileName');
+
+    // Package formData
     FormData formData = FormData.fromMap(
       {
         'username': username,
@@ -41,52 +44,67 @@ class NodeAuthProvider implements AuthProvider {
         'first_name': firstName,
         'last_name': lastName,
         'gender': gender,
-        'profile_picture': await MultipartFile.fromFile(
-          image.path,
-          filename: photoFileName,
-          contentType: MediaType('image', 'png'),
-        ),
-        'document': await MultipartFile.fromFile(
-          document.path,
-          filename: documentFileName,
-          contentType: MediaType('image', 'png'),
-        ),
+        'profile_picture': '',
+        // await MultipartFile.fromFile(
+        //   image.path,
+        //   filename: photoFileName,
+        //   contentType: MediaType('image', 'png'),
+        // ),
+        'document': ''
+        // await MultipartFile.fromFile(
+        //   image.path,
+        //   filename: documentFileName,
+        //   contentType: MediaType('image', 'png'),
+        // ),
       },
     );
-    Response formDataresponse = await dio.post(
-      registerUrl,
-      data: formData,
-      options: Options(
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      ),
-    );
 
-    var formDataJsonResponse = jsonDecode(formDataresponse.data);
-    print(formDataJsonResponse);
+    // send formData
+    try {
+      Response formDataresponse = await dio.post(
+        registerUrl,
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+      print('RawResponse:$formDataresponse');
+      final formDataSuccessStatus = formDataresponse.data['status'];
+      return formDataSuccessStatus;
+    } on Exception catch (e) {
+      print(
+        e.toString(),
+      );
+      return '';
+    }
 
-    var registerUserBody = {
-      'username': username,
-      'email': email,
-      'password': password,
-      "typeof_user": userType,
-      "first_name": firstName,
-      "last_name": lastName,
-      "gender": gender,
-    };
+    // var formDataJsonResponse = jsonDecode(formDataresponse.data);
+    // print('FormData:$formDataJsonResponse');
 
-    var response = await http.post(
-      Uri.parse(registerUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(registerUserBody),
-    );
+    // sending data in json form
+    // var registerUserBody = {
+    //   'username': username,
+    //   'email': email,
+    //   'password': password,
+    //   "typeof_user": userType,
+    //   "first_name": firstName,
+    //   "last_name": lastName,
+    //   "gender": gender,
+    // };
 
-    var jsonResponse = jsonDecode(response.body);
-    print(jsonResponse);
+    // var response = await http.post(
+    //   Uri.parse(registerUrl),
+    //   headers: {'Content-Type': 'application/json'},
+    //   body: jsonEncode(registerUserBody),
+    // );
+
+    // var jsonResponse = jsonDecode(response.body);
+    // print(jsonResponse);
     // final keyR = jsonResponse['message:'];
     // print('Recived:$keyR');
-    final successStatus = jsonResponse['success'];
+    // final successStatus = jsonResponse['success'];
     // print("resp:$resp");
     // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(jsonResponse);
     // print('res:$jwtDecodedToken');
@@ -98,7 +116,14 @@ class NodeAuthProvider implements AuthProvider {
 
     // print(successResponse);
 
-    return successStatus;
+    // print('StringRes:$formDataresponse.data.toString()');
+
+    // Map<String, dynamic> decodedSuccessStatus =
+    //     JwtDecoder.decode(formDataresponse);
+
+    // print('SucStat:$formDataSuccessStatus');
+
+    // return successStatus;
     // final user = currentUser;
     // if (user != null) {
     //   print('response');
