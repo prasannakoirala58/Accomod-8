@@ -1,4 +1,4 @@
-// import 'package:http_parser/http_parser.dart';
+import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'dart:convert';
@@ -29,8 +29,8 @@ class NodeAuthProvider implements AuthProvider {
       throw PasswordDoesNotMatchAuthException;
     }
     Dio dio = Dio();
-    // String photoFileName = image.path.split('/').last;
-    // String documentFileName = document.path.split('/').last;
+    String photoFileName = image.path.split('/').last;
+    String documentFileName = document.path.split('/').last;
 
     // print('photoFile:$photoFileName, documentFile:$documentFileName');
 
@@ -44,18 +44,16 @@ class NodeAuthProvider implements AuthProvider {
         'first_name': firstName,
         'last_name': lastName,
         'gender': gender,
-        'profile_picture': '',
-        // await MultipartFile.fromFile(
-        //   image.path,
-        //   filename: photoFileName,
-        //   contentType: MediaType('image', 'png'),
-        // ),
-        'document': ''
-        // await MultipartFile.fromFile(
-        //   image.path,
-        //   filename: documentFileName,
-        //   contentType: MediaType('image', 'png'),
-        // ),
+        'profile_picture': await MultipartFile.fromFile(
+          image.path,
+          filename: photoFileName,
+          contentType: MediaType('image', 'png'),
+        ),
+        'document': await MultipartFile.fromFile(
+          document.path,
+          filename: documentFileName,
+          contentType: MediaType('image', 'png'),
+        ),
       },
     );
 

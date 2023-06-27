@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:accomod8/services/auth/auth_exceptions.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
+import 'package:accomod8/utility/image_uploader/upload_image.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -18,14 +18,20 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  File? selectedImageFromGallery;
+  File? selectedImageFromCamera;
   late final TextEditingController _firstname;
   late final TextEditingController _lastname;
   late final TextEditingController _email;
   late final TextEditingController _username;
   late final TextEditingController _password;
   late final TextEditingController _confirmpassword;
+
+  _SignUpScreenState();
   @override
   void initState() {
+    // selectedImageFromGallery;
+    // selectedImageFromCamera;
     _firstname = TextEditingController();
     _lastname = TextEditingController();
     _email = TextEditingController();
@@ -71,6 +77,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 150,
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: TextButton(
+                      onPressed: () async {
+                        selectedImageFromCamera =
+                            await ImageUploader().selectImageFromCamera();
+                        print(
+                            'Camera image Path in Signup$selectedImageFromCamera');
+                      },
+                      child: const Text('Pick Image from Camera'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: TextButton(
+                      onPressed: () async {
+                        selectedImageFromGallery =
+                            await ImageUploader().selectImageFromGallery();
+                        print(
+                            'Gallery image Path in Signup$selectedImageFromGallery');
+                      },
+                      child: const Text('Pick Image from Gallery'),
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: selectedImageFromCamera != null
+                          ? Image.file(
+                              selectedImageFromCamera!,
+                              height: 100,
+                              width: 150,
+                            )
+                          : const Text('Camera image is shown here')),
+                  Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: selectedImageFromGallery != null
+                          ? Image.file(
+                              selectedImageFromGallery!,
+                              height: 100,
+                              width: 150,
+                            )
+                          : const Text('Gallery image is shown here')),
                   const SizedBox(height: 5),
                   Padding(
                     padding:
@@ -256,6 +304,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           throw FieldsCannotBeEmptyException;
                         }
                         try {
+                          // send request to server
                           final response = await NodeAuthProvider().createUser(
                             firstName: firstName,
                             lastName: lastName,
@@ -265,8 +314,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             password: password,
                             matchingPassword: confirmPassword,
                             userType: 'user',
-                            document: File('images/acclog.png'),
-                            image: File('images/acclog.png'),
+                            image: File(selectedImageFromGallery!.path),
+                            document: File(selectedImageFromCamera!.path),
                           );
 
                           if (response == 'success') {
