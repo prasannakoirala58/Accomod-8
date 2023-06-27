@@ -1,5 +1,7 @@
 // import 'package:accomod8/services/auth/auth_user.dart';
 
+import 'dart:io';
+
 abstract class AuthProvider {
   Future<void> initialize();
 
@@ -22,11 +24,11 @@ abstract class AuthProvider {
   // });
 
   Future<String> logIn({
-    required String username,
+    required String email,
     required String password,
   });
 
-  Future<bool> createUser({
+  Future<String> createUser({
     required String firstName,
     required String lastName,
     required String email,
@@ -35,5 +37,7 @@ abstract class AuthProvider {
     required String password,
     required String matchingPassword,
     required String userType,
+    required File image,
+    required File document,
   });
 }
