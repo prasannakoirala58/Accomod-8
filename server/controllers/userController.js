@@ -87,7 +87,7 @@ exports.register_user = async (req, res, next) => {
   try {
     const body = req.body;
     const { profile_picture, document } = req.files || {};
-    // console.log(body.username);
+    // console.log(profile_picture);
 
     let profileCloudUrl = null;
     let documentCloudUrl = null;
