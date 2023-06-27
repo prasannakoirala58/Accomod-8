@@ -2,14 +2,16 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 // const fs = require('fs');
 // const path = require('path');
+const { promisify } = require('util');
 const User = require('../models/user');
 const Hostel = require('../models/hostel');
 const Review = require('../models/review');
 const crypto = require('crypto');
-const sendEmail = require('../utils/mailing');
+const Email = require('../utils/mailing');
 const cloudinary = require('cloudinary');
 const upload = require('../utils/multerConfig');
 const { handleCloudinaryUpload, deleteFromCloudinary } = require('../utils/cloudinaryUtils');
+const { CreateError } = require('../utils/CreateError');
 
 // Multer middleware for uploading user photo and document
 exports.uploadUserPhoto = upload.fields([
@@ -29,15 +31,22 @@ const getToken = (req) => {
   return null;
 };
 
-/* 
-    @desc create reset password token
+/*
+    @route GET /api/users/logout
+    @desc Log Out a user
     @access Private
 */
-const createResetPasswordToken = async () => {
-  const resetToken = crypto.randomBytes(20).toString('hex');
-  const reset_password_token = crypto.createHash('sha256').update(resetToken).digest('hex');
-  const reset_token_expires = Date.now() + 10 * 60 * 1000;
-  return { resetToken, reset_password_token, reset_token_expires };
+exports.logout_user = (req, res, next) => {
+  try {
+    res.clearCookie('token');
+    res.status(200).json({
+      status: 'success',
+      msg: 'User logged out successfully!',
+    });
+  } catch (err) {
+    console.log('Yo logout ko error ho hai:', err);
+    next(err);
+  }
 };
 
 /*
@@ -81,7 +90,7 @@ exports.register_user = async (req, res, next) => {
   try {
     const body = req.body;
     const { profile_picture, document } = req.files || {};
-    console.log(body.username);
+    // console.log(profile_picture);
 
     let profileCloudUrl = null;
     let documentCloudUrl = null;
@@ -91,7 +100,7 @@ exports.register_user = async (req, res, next) => {
         profile_picture[0].buffer,
         'tempPhoto.jpg',
         'avatars',
-        `${body.username}_profile}`
+        `${body.username}_profile`
       );
     }
 
@@ -160,7 +169,9 @@ exports.login_user = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+passwordHash');
+
+    // console.log('Yo user ho hai:', user);
 
     const correctPassword =
       user === null ? false : await bcrypt.compare(password, user.passwordHash);
@@ -191,7 +202,6 @@ exports.login_user = async (req, res, next) => {
         status: 'success',
         data: {
           id: user._id,
-          token,
           username: user.username,
           profile_picture: user.profile.profile_picture,
         },
@@ -206,84 +216,68 @@ exports.login_user = async (req, res, next) => {
     @desc Update a user
     @access Private
 */
+
+// Filter out unwanted fields that are not allowed to be updated
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+
+  return newObj;
+};
+
 exports.update_user = async (req, res, next) => {
   try {
     const body = req.body;
-    console.log('body passed', body);
-    let profileSecureURL = '';
-    let documentSecureURL = '';
+    const { profile_picture } = req.files || {};
 
+    // yo token req.cookies.token ma xa
     const token = getToken(req);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
+    const decodedToken = await promisify(jwt.verify)(token, process.env.SECRET);
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
 
     const user = await User.findById(decodedToken.id);
 
-    if (body.profile_picture) {
-      if (typeof body.profile_picture === 'string') {
-        profileSecureURL = body.profile_picture;
-      } else {
-        const profileCloud = await cloudinary.v2.uploader.upload(body.profile_picture, {
-          folder: 'avatars',
-          width: 1020,
-          crop: 'scale',
-        });
+    let filteredBody = filterObj(body, 'email');
 
-        // Delete the existing profile picture from Cloudinary if it exists
-        if (user.profile.profile_picture) {
-          const publicId = user.profile.profile_picture.split('/avatars/')[1].split('.')[0];
-          await cloudinary.v2.uploader.destroy(`avatars/${publicId}`);
-        }
-
-        profileSecureURL = profileCloud.secure_url;
+    if (profile_picture) {
+      if (user.profile.profile_picture) {
+        const publicId = user.profile.profile_picture.split('/avatars/')[1].split('.')[0];
+        await cloudinary.v2.uploader.destroy(`avatars/${publicId}`);
       }
+
+      // Upload the new profile picture to Cloudinary
+      profileCloudUrl = await handleCloudinaryUpload(
+        profile_picture[0].buffer,
+        'tempPhoto.jpg',
+        'avatars',
+        `${user.username}_profile`
+      );
+
+      filteredBody['profile.profile_picture'] = profileCloudUrl;
     }
 
-    if (body.document) {
-      if (typeof body.document === 'string') {
-        documentSecureURL = body.document;
-      } else {
-        const documentCloud = await cloudinary.v2.uploader.upload(body.document, {
-          folder: 'documents',
-          public_id: `document_${Date.now()}`,
-        });
+    // console.log('filtered body', filteredBody);
 
-        // Delete the existing document from Cloudinary if it exists
-        if (user.profile.document) {
-          const publicId = user.profile.document.split('/documents/')[1].split('.')[0];
-          await cloudinary.v2.uploader.destroy(`documents/${publicId}`);
-        }
-
-        documentSecureURL = documentCloud.secure_url;
-      }
-    }
-
-    const data = {
-      username: body.username,
-      email: body.email,
-      profile: {
-        first_name: body.first_name,
-        middle_name: body.middle_name,
-        last_name: body.last_name,
-        gender: body.gender,
-        phone_number: body.phone_number,
-        address: body.address,
-        profile_picture: profileSecureURL || user.profile.profile_picture,
-        document: documentSecureURL || user.profile.document,
-      },
-    };
-
-    if (user) {
-      const updatedUser = await User.findByIdAndUpdate(req.params.id, data, {
+    // 3 ) Update user document
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      // { $set: { ...body, ...filteredBody } },
+      filteredBody,
+      {
         new: true,
         runValidators: true,
-        useFindAndModify: false,
-      });
+      }
+    );
 
-      res.status(200).json(updatedUser);
-    }
+    res.status(200).json({
+      status: 'success',
+      data: updatedUser,
+    });
   } catch (err) {
     next(err);
   }
@@ -304,13 +298,19 @@ exports.update_password = async (req, res, next) => {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
 
-    const user = await User.findById(decodedToken.id);
+    const user = await User.findById(decodedToken.id).select('+passwordHash');
     const correctPassword =
-      user === null ? false : await bcrypt.compare(body.old_password, user.passwordHash);
+      user === null ? false : await bcrypt.compare(body.passwordCurrent, user.passwordHash);
 
     if (correctPassword) {
+      if (body.password !== body.passwordConfirm) {
+        return res.status(401).json({
+          status: 'error',
+          msg: 'Passwords do not match',
+        });
+      }
       const saltRounds = 10;
-      const passwordHash = bcrypt.hashSync(body.new_password, saltRounds);
+      const passwordHash = bcrypt.hashSync(body.password, saltRounds);
       const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
         { passwordHash },
@@ -320,9 +320,15 @@ exports.update_password = async (req, res, next) => {
           useFindAndModify: false,
         }
       );
-      res.status(200).json(updatedUser);
+      res.status(200).json({
+        status: 'success',
+        data: updatedUser,
+      });
     } else {
-      res.status(401).json({ error: 'Incorrect password' });
+      res.status(401).json({
+        status: 'error',
+        msg: 'Incorrect password',
+      });
     }
   } catch (err) {
     next(err);
@@ -339,35 +345,26 @@ exports.forgot_password = async (req, res, next) => {
     const body = req.body;
 
     const user = await User.findOne({ email: body.email });
-    const { resetToken, reset_password_token, reset_token_expires } =
-      await createResetPasswordToken();
-    const updatedUserResetToken = await User.findByIdAndUpdate(
-      user._id,
-      { reset_password_token, reset_token_expires },
-      {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-      }
-    );
+
+    if (!user) {
+      return next(new CreateError('There is no user with this email address.', 404));
+    }
+
+    // 2) Generate the random reset token
+    const resetToken = await user.createPasswordResetToken();
+
+    // this turns all the validators off for the user so that they can proceed to reset their password
+    await user.save({ validateBeforeSave: false });
 
     /* mail options configured */
-    const resetPasswordLink = `${req.protocol}://${req.get(
+    const resetURL = `${req.protocol}://${req.get(
       'host'
-    )}/new_password/${resetToken}`;
-    const message = `
-            You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
-            Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
-            ${resetPasswordLink}\n\n
-            If you did not request this, please ignore this email and your password will remain unchanged.\n
-        `;
-    const options = {
-      email: body.email,
-      subject: 'Reset Password',
-      message,
-    };
+    )}/api/users/resetPassword/${resetToken}`;
 
-    await sendEmail(options);
+    console.log('Yo user pathako wala Email ma: ', user);
+
+    const em = await new Email(user, resetURL).sendPasswordReset();
+
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email!',

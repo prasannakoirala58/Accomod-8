@@ -35,11 +35,13 @@ const userRouter = require('./routers/userRouter');
 const hostelRouter = require('./routers/hostelRouter');
 const reviewRouter = require('./routers/reviewRouter');
 const analyticsRouter = require('./routers/analyticsRouter');
+const testRouter = require('./routers/testRouter');
 
 app.use('/api/reviews', reviewRouter);
 app.use('/api/users', userRouter);
 app.use('/api/hostels', hostelRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/test', testRouter);
 
 // For dev purposes
 // app.use('/', (req, res, next) => {
@@ -53,6 +55,7 @@ app.use((err, req, res, next) => {
   err.status = err.status || 500;
   err.message = err.message || 'Internal Server Error';
   res.status(err.status).json({
+    error: err,
     success: false,
     message: err.message,
     stack: err.stack,
