@@ -17,15 +17,15 @@ class NavBarRoots extends StatefulWidget {
 }
 
 class _NavBarRootsState extends State<NavBarRoots> {
-  late String navToken;
-  late String email;
-  @override
-  void initState() {
-    super.initState();
-    navToken = widget.token;
-    // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-    // email = jwtDecodedToken['username'];
-  }
+  // late String navToken;
+  // late String email;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // navToken = widget.token;
+  //   // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+  //   // email = jwtDecodedToken['username'];
+  // }
 
   _NavBarRootsState() {
     // finalbartoken=super.widget.token;

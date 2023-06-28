@@ -7,6 +7,7 @@ const {
   uploadUserPhoto,
   register_user,
   login_user,
+  logout_user,
   update_user,
   verify_user,
   update_password,
@@ -26,14 +27,16 @@ router.get('/checkadmin', verifyAdmin, (req, res) => {
 router.route('/').get(get_users);
 router.route('/verify/:id').put(verify_user);
 router.route('/unverified').get(get_unverified_users);
+router.route('/logout').get(logout_user);
 router.route('/:id').get(get_user);
 router.route('/register').post(uploadUserPhoto, register_user);
 router.route('/login').post(login_user);
-// router.route('/update/:id').put(verifyUser, update_user);
-router.route('/update/:id').patch(verifyUser, update_user);
-router.route('/update/password/reset/:token').put(reset_password);
-router.route('/update/password/forgot').put(forgot_password);
-router.route('/update/password/:id').put(verifyUser, update_password);
+router.route('/update/:id').patch(verifyUser, uploadUserPhoto, update_user);
+router.route('/updateMyPassword/:id').patch(verifyUser, update_password);
+// router.route('/forgotPassword').put(forgot_password);
+router.route('/forgotPassword').patch(forgot_password);
+// router.route('/update/password/reset/:token').put(reset_password);
+router.route('/resetPassword/:token').patch(reset_password);
 router.route('/delete/:id').delete(verifyUser, delete_user);
 
 module.exports = router;
