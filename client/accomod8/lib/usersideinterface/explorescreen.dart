@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import '../utility/string_formatter/user_data_formatter.dart';
 
 class ExploreScreen extends StatefulWidget {
   final String token;
@@ -13,12 +13,29 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  late final String username;
+  String username = '';
 
   @override
   void initState() {
-    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-    username = jwtDecodedToken['username'];
+    // extracting username from token
+    // can be later used to extract other values from token
+    try {
+      Map<String, dynamic> extractedData =
+          UserDataFormatter.extractValues(widget.token);
+
+      setState(
+        () {
+          username = extractedData['username'];
+        },
+      );
+    } on Exception catch (e) {
+      setState(
+        () {
+          username = 'Error';
+        },
+      );
+      print('Error in explore page:$e');
+    }
     super.initState();
   }
 
