@@ -133,6 +133,7 @@ class _LogInScreenState extends State<LogInScreen> {
                               email: email,
                               password: password,
                             );
+                            print('Token in client:$_loginToken');
                             SuccessSnackBar.showSnackBar(
                               context,
                               'Logged in successfully',

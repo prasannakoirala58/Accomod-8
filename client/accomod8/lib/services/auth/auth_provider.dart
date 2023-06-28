@@ -40,4 +40,6 @@ abstract class AuthProvider {
     required File image,
     required File document,
   });
+
+  Future<String> logOut();
 }
