@@ -17,6 +17,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   void initState() {
+    // extracting username from token
+    // can be later used to extract other values from token
     try {
       Map<String, dynamic> extractedData =
           UserDataFormatter.extractValues(widget.token);
@@ -29,7 +31,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     } on Exception catch (e) {
       setState(
         () {
-          username = 'Error1';
+          username = 'Error';
         },
       );
       print('Error in explore page:$e');
