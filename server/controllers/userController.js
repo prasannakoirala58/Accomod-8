@@ -336,10 +336,11 @@ exports.update_password = async (req, res, next) => {
     @access Private
 */
 exports.forgot_password = async (req, res, next) => {
+  let user;
   try {
     const body = req.body;
 
-    const user = await User.findOne({ email: body.email });
+    user = await User.findOne({ email: body.email });
 
     if (!user) {
       return next(new CreateError('There is no user with this email address.', 404));
@@ -356,8 +357,6 @@ exports.forgot_password = async (req, res, next) => {
       'host'
     )}/api/users/resetPassword/${resetToken}`;
 
-    console.log('Yo user pathako wala Email ma: ', user);
-
     const em = await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
@@ -365,7 +364,15 @@ exports.forgot_password = async (req, res, next) => {
       message: 'Token sent to email!',
     });
   } catch (err) {
-    next(err);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new CreateError('There was an error sending the email. Try again later!'),
+      500
+    );
   }
 };
 
@@ -378,14 +385,14 @@ exports.reset_password = async (req, res, next) => {
   try {
     const body = req.body;
 
-    const reset_password_token = crypto
+    const passwordResetToken = crypto
       .createHash('sha256')
       .update(req.params.token)
       .digest('hex');
 
     const user = await User.findOne({
-      reset_password_token,
-      reset_token_expires: { $gt: Date.now() },
+      passwordResetToken,
+      passwordResetExpires: { $gt: Date.now() },
     });
 
     if (user) {
@@ -404,7 +411,10 @@ exports.reset_password = async (req, res, next) => {
           useFindAndModify: false,
         }
       );
-      await res.status(200).json(updatedUser);
+      await res.status(200).json({
+        status: 'success',
+        data: updatedUser,
+      });
     } else {
       res.status(401).json({ error: 'Invalid or expired token' });
     }
