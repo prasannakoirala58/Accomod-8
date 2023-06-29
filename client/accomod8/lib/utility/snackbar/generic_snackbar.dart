@@ -45,7 +45,7 @@ class GenericSnackBarWidget extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const Spacer(),
+                    Expanded(child: const Spacer()),
                     Text(
                       message,
                       style: const TextStyle(
