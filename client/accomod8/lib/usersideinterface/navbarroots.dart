@@ -17,21 +17,6 @@ class NavBarRoots extends StatefulWidget {
 }
 
 class _NavBarRootsState extends State<NavBarRoots> {
-  late String navToken;
-  late String email;
-  @override
-  void initState() {
-    super.initState();
-    navToken = widget.token;
-    // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-    // email = jwtDecodedToken['username'];
-  }
-
-  _NavBarRootsState() {
-    // finalbartoken=super.widget.token;
-    // required super.token;
-  }
-
   int _selectedIndex = 0;
   List<Widget> get _screens => [
         //Explore screen
@@ -43,7 +28,9 @@ class _NavBarRootsState extends State<NavBarRoots> {
         //Favourite
         FavouriteScreen(),
         //Setting Screen
-        SettingScreen(),
+        SettingScreen(
+          token: widget.token,
+        ),
       ];
   @override
   Widget build(BuildContext context) {
