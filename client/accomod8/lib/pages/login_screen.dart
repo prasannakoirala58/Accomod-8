@@ -69,7 +69,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     controller: _email,
                     enableSuggestions: false,
                     autocorrect: false,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       // filled: true,
                       // fillColor: Colors.white,
                       focusedBorder: OutlineInputBorder(
@@ -78,7 +78,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         ),
                       ),
                       labelText: "Enter Email",
-                      prefixIcon: const Icon(Icons.person),
+                      prefixIcon: Icon(Icons.person),
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
