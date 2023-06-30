@@ -108,10 +108,11 @@ class _LogInScreenState extends State<LogInScreen> {
                       // filled: true,
                       // fillColor: Colors.white,
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 242, 162, 131),
-                          )),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 242, 162, 131),
+                        ),
+                      ),
                       labelText: "Enter Password",
 
                       prefixIcon: const Icon(Icons.lock),
@@ -246,9 +247,9 @@ class _LogInScreenState extends State<LogInScreen> {
                     const Text(
                       "Don't Have an Account?",
                       style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black54),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     //here create an account wala button press garyo vane we will go to signup screen
                     TextButton(
