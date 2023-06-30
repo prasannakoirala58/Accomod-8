@@ -1,0 +1,14 @@
+MONGODB_URI=mongodb+srv://prasanna2koirala:rW0Ka0hPRboorpeB@hostel-cluster.somzvyc.mongodb.net/accomod-8?retryWrites=true&w=majority
+SECRET=99-problems-but-express-aint-one
+PORT=5000
+# SMPT_SERVICE= 
+# SMPT_EMAIL= 
+# SMPT_PASSWORD= 
+COOKIE_EXPIRES_IN=90 
+CLOUDINARY_NAME=accomod-8
+CLOUDINARY_API_KEY=776914488651768 
+CLOUDINARY_API_SECRET=bVTgT8OY4S8wM6drl6OH-dAn_RI
+
+# MongoDb Hostel App Credentials
+# username: prasanna2koirala
+# password: rW0Ka0hPRboorpeB

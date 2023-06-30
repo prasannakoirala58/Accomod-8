@@ -42,4 +42,6 @@ abstract class AuthProvider {
   });
 
   Future<String> logOut();
+
+  Future<String> deleteUser({required String id});
 }

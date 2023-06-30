@@ -15,7 +15,10 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+
   final _formField = GlobalKey<FormState>();
+  //final _formField = GlobalKey<FormState>();
+
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final String _loginToken;
@@ -37,6 +40,7 @@ class _LogInScreenState extends State<LogInScreen> {
   bool _passwordVisible = false;
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SingleChildScrollView(
         child: GestureDetector(
@@ -155,11 +159,13 @@ class _LogInScreenState extends State<LogInScreen> {
                           //   throw FieldsCannotBeEmptyException;
                           // }
                           if (_formField.currentState!.validate()) {
+
                             try {
                               _loginToken = await NodeAuthProvider().logIn(
                                 email: email,
                                 password: password,
                               );
+
                               print('Token in client:$_loginToken');
 
                               setState(() {
@@ -189,6 +195,21 @@ class _LogInScreenState extends State<LogInScreen> {
                               //     ),
                               //   ),
                               // );
+
+                              SuccessSnackBar.showSnackBar(
+                                context,
+                                'Logged in successfully',
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NavBarRoots(
+                                    token: _loginToken,
+                                  ),
+
+                                ),
+                              );
+
                               // print('ok data aayo');
                               // print(_loginToken);
                             } on WrongCredentialsAuthException {
@@ -206,6 +227,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                 context,
                                 e.toString(),
                               );
+
                               print('Login Error:${e.toString()}');
                             }
                           }
@@ -224,43 +246,44 @@ class _LogInScreenState extends State<LogInScreen> {
                                   color: Colors.white,
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
+
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't Have an Account?",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black54),
-                    ),
-                    //here create an account wala button press garyo vane we will go to signup screen
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
-                            ));
-                      },
-                      child: const Text("Create an Account",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 242, 162, 131),
-                          )),
-                    ),
-                  ],
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't Have an Account?",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54),
+                      ),
+                      //here create an account wala button press garyo vane we will go to signup screen
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpScreen(),
+                              ));
+                        },
+                        child: const Text("Create an Account",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 242, 162, 131),
+                            )),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
