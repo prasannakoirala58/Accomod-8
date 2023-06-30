@@ -241,8 +241,13 @@ packages:
     dependency: "direct main"
     description:
       name: http
+<<<<<<< HEAD
       sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
       url: "https://pub.dev"
+=======
+      sha256: "4c3f04bfb64d3efd508d06b41b825542f08122d30bda4933fb95c069d22a4fa3"
+      url: "https://pub.flutter-io.cn"
+>>>>>>> test
     source: hosted
     version: "1.1.0"
   http_parser:
@@ -513,7 +518,15 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_platform_interface
+<<<<<<< HEAD
       sha256: "23b052f17a25b90ff2b61aad4cc962154da76fb62848a9ce088efe30d7c50ab1"
+=======
+<<<<<<<<< Temporary merge branch 1
+      sha256: fb5cf25c0235df2d0640ac1b1174f6466bd311f621574997ac59018a6664548d
+=========
+      sha256: "23b052f17a25b90ff2b61aad4cc962154da76fb62848a9ce088efe30d7c50ab1"
+>>>>>>>>> Temporary merge branch 2
+>>>>>>> test
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
@@ -630,7 +643,15 @@ packages:
     dependency: transitive
     description:
       name: win32
+<<<<<<< HEAD
       sha256: dfdf0136e0aa7a1b474ea133e67cb0154a0acd2599c4f3ada3b49d38d38793ee
+=======
+<<<<<<<<< Temporary merge branch 1
+      sha256: "1414f27dd781737e51afa9711f2ac2ace6ab4498ee98e20863fa5505aa00c58c"
+=========
+      sha256: dfdf0136e0aa7a1b474ea133e67cb0154a0acd2599c4f3ada3b49d38d38793ee
+>>>>>>>>> Temporary merge branch 2
+>>>>>>> test
       url: "https://pub.dev"
     source: hosted
     version: "5.0.5"
