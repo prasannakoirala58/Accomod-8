@@ -1,6 +1,7 @@
 import 'package:accomod8/usersideinterface/explorescreen.dart';
 import 'package:accomod8/usersideinterface/favouritesscreen.dart';
 import 'package:accomod8/usersideinterface/settingscreen.dart';
+import 'package:accomod8/usersideinterface/user_card/user_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:jwt_decoder/jwt_decoder.dart';
@@ -23,10 +24,18 @@ class _NavBarRootsState extends State<NavBarRoots> {
         ExploreScreen(
           token: widget.token,
         ),
+
+        //For displaying users. will be later replaced and be implemented on explore scrreen
+        UserListScreen(
+          token: widget.token,
+        ),
+
         //Add later on
         Container(),
+
         //Favourite
         FavouriteScreen(),
+
         //Setting Screen
         SettingScreen(
           token: widget.token,
@@ -52,14 +61,22 @@ class _NavBarRootsState extends State<NavBarRoots> {
               _selectedIndex = Index;
             });
           },
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.search,
                 size: 25,
               ),
+
               // label: email,
               label: "Explore",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.account_box,
+                size: 25,
+              ),
+              label: "Users",
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.heart_circle_fill, size: 25),

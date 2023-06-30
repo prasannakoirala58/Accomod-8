@@ -153,4 +153,15 @@ class NodeAuthProvider implements AuthProvider {
     // return 'no';
     return jsonResponse['status'];
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    var response = await http.get(Uri.parse(getUserUrl));
+    var jsonResponse = jsonDecode(response.body);
+    // print('Get-User Response:$jsonResponse');
+    List<Map<String, dynamic>> users =
+        List<Map<String, dynamic>>.from(jsonResponse);
+    // print('Mapped Users:$users');
+    return users;
+  }
 }
