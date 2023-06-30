@@ -40,4 +40,8 @@ abstract class AuthProvider {
     required File image,
     required File document,
   });
+
+  Future<String> logOut();
+
+  Future<String> deleteUser({required String id});
 }

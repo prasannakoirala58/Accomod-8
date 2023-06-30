@@ -133,6 +133,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             final email = _email.text;
                             final password = _password.text;
 
+<<<<<<< HEAD
                             if (email.isEmpty || password.isEmpty) {
                               ErrorSnackBar.showSnackBar(
                                 context,
@@ -155,6 +156,30 @@ class _LogInScreenState extends State<LogInScreen> {
                                   builder: (context) => NavBarRoots(
                                     token: _loginToken,
                                   ),
+=======
+                          if (email.isEmpty || password.isEmpty) {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              'Fields cannot be empty',
+                            );
+                            throw FieldsCannotBeEmptyException;
+                          }
+                          try {
+                            _loginToken = await NodeAuthProvider().logIn(
+                              email: email,
+                              password: password,
+                            );
+                            print('Token in client:$_loginToken');
+                            SuccessSnackBar.showSnackBar(
+                              context,
+                              'Logged in successfully',
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NavBarRoots(
+                                  token: _loginToken,
+>>>>>>> 3598c328517bf3f7a291620216bd027fa43f15de
                                 ),
                               );
                               // print('ok data aayo');

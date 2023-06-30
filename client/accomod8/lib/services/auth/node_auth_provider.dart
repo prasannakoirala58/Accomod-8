@@ -77,82 +77,7 @@ class NodeAuthProvider implements AuthProvider {
       );
       return '';
     }
-
-    // var formDataJsonResponse = jsonDecode(formDataresponse.data);
-    // print('FormData:$formDataJsonResponse');
-
-    // sending data in json form
-    // var registerUserBody = {
-    //   'username': username,
-    //   'email': email,
-    //   'password': password,
-    //   "typeof_user": userType,
-    //   "first_name": firstName,
-    //   "last_name": lastName,
-    //   "gender": gender,
-    // };
-
-    // var response = await http.post(
-    //   Uri.parse(registerUrl),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode(registerUserBody),
-    // );
-
-    // var jsonResponse = jsonDecode(response.body);
-    // print(jsonResponse);
-    // final keyR = jsonResponse['message:'];
-    // print('Recived:$keyR');
-    // final successStatus = jsonResponse['success'];
-    // print("resp:$resp");
-    // Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(jsonResponse);
-    // print('res:$jwtDecodedToken');
-
-    // factory; NodeAuthProvider.fromJson(Map<String, dynamic>jsonData)=> NodeAuthProvider(
-    //   status: jsonData['success'] as bool,
-    // );
-    // final successResponse = jwtDecodedToken['success'];
-
-    // print(successResponse);
-
-    // print('StringRes:$formDataresponse.data.toString()');
-
-    // Map<String, dynamic> decodedSuccessStatus =
-    //     JwtDecoder.decode(formDataresponse);
-
-    // print('SucStat:$formDataSuccessStatus');
-
-    // return successStatus;
-    // final user = currentUser;
-    // if (user != null) {
-    //   print('response');
-    //   return user;
-    // } else {
-    //   print('cringe');
-    //   throw 'a';
   }
-
-// @override
-// AuthUser? get currentUser async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   SharedPreferences pref = await SharedPreferences.getInstance();
-
-//   var username = pref.getString('username');
-//   final user = username.toString();
-//   if (user != null) {
-//     return user;
-//   } else {
-//     return null;
-//   }
-//   // const MyApp({@required token, Key? key,}):super(key: key);
-// }
-
-// @override
-// AuthUser? get currentUser async {
-//   final user = prefs.getString('username');
-//   if (user != null){
-//     return <AuthUser>;
-//   }
-// }
 
   @override
   Future<void> initialize() async {
@@ -170,7 +95,9 @@ class NodeAuthProvider implements AuthProvider {
     };
     var response = await http.post(
       Uri.parse(loginUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
       body: jsonEncode(loginUserBody),
     );
 
@@ -190,22 +117,40 @@ class NodeAuthProvider implements AuthProvider {
     } else {
       print('no token');
       throw WrongCredentialsAuthException();
-      // final user = prefs.getString('username');
-      // return user;
     }
+  }
 
-    //   final user = currentUser;
-    //   if (user != null) {
-    //     print('response');
-    //     return user;
-    //   } else {
-    //     print('cringe');
-    //     throw 'a';
-    //   }
-    // }
+  @override
+  Future<String> logOut() async {
+    var response = await http.get(
+      Uri.parse(logoutUrl),
+    );
 
-    // @override
-    // // TODO: implement currentUser
-    // AuthUser? get currentUser => throw UnimplementedError();
+    var jsonResponse = jsonDecode(response.body);
+    print('Logout JSON:$jsonResponse');
+    if (jsonResponse['status'] == 'success') {
+      print('Logout');
+    } else {
+      print('Error logging out');
+    }
+    return jsonResponse['status'];
+  }
+
+  @override
+  Future<String> deleteUser({required String id}) async {
+    var deletingUrl = '$deleteUrl/$id';
+    print('Deleting url: $deletingUrl');
+    var response = await http.delete(Uri.parse(deletingUrl));
+    // var response = await http.delete(Uri.parse(deleteUrl));
+    var jsonResponse = jsonDecode(response.body);
+    print('Delete JSON:$jsonResponse');
+    if (jsonResponse['status'] == 'success') {
+      print('Delete');
+    } else {
+      jsonResponse['status'] = 'failure';
+      print('Error deleting');
+    }
+    // return 'no';
+    return jsonResponse['status'];
   }
 }
