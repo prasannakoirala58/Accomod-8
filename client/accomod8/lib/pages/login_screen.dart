@@ -15,6 +15,9 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  final _formField = GlobalKey<FormState>();
+  //final _formField = GlobalKey<FormState>();
+
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final String _loginToken;
@@ -36,11 +39,15 @@ class _LogInScreenState extends State<LogInScreen> {
   bool _passwordVisible = false;
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: SafeArea(
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Form(
+            key: _formField,
             child: Column(
               children: [
                 const SizedBox(
@@ -60,133 +67,179 @@ class _LogInScreenState extends State<LogInScreen> {
                 const SizedBox(height: 75),
                 Padding(
                   padding: const EdgeInsets.all(12),
-                  child: TextField(
+                  child: TextFormField(
                     controller: _email,
                     enableSuggestions: false,
                     autocorrect: false,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        label: const Text(
-                          "Enter Email",
-                          style: TextStyle(fontSize: 20),
+                    decoration: const InputDecoration(
+                      // filled: true,
+                      // fillColor: Colors.white,
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 242, 162, 131),
                         ),
-                        prefixIcon: const Icon(Icons.person)),
+                      ),
+                      labelText: "Enter Email",
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Email cannot be empty";
+                      }
+                      bool emailValid = RegExp(
+                              r"^[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+")
+                          .hasMatch(value);
+                      if (!emailValid) {
+                        return "Invalid Email";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.all(12),
-                  child: TextField(
-                      controller: _password,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        label: const Text(
-                          "Enter Password",
-                          style: TextStyle(fontSize: 20),
+                  child: TextFormField(
+                    controller: _password,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: !_passwordVisible,
+                    decoration: InputDecoration(
+                      // filled: true,
+                      // fillColor: Colors.white,
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 242, 162, 131),
+                          )),
+                      labelText: "Enter Password",
+
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _passwordVisible = !_passwordVisible;
+                          });
+                        },
+                        child: Icon(
+                          _passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                          child: Icon(
-                            _passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                        ),
-                      )),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter Password";
+                      } else if (_password.text.length < 6) {
+                        return "Password lenghth should not be less than 6 characters";
+                      }
+                      return null;
+                    },
+                  ),
                 ),
                 const SizedBox(height: 50),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Material(
-                      color: const Color.fromARGB(255, 213, 127, 93),
-                      borderRadius: BorderRadius.circular(12),
-                      child: InkWell(
-                        onTap: () async {
-                          final email = _email.text;
-                          final password = _password.text;
+                    padding: const EdgeInsets.all(10.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        color: const Color.fromARGB(255, 213, 127, 93),
+                        borderRadius: BorderRadius.circular(12),
+                        child: InkWell(
+                          onTap: () async {
+                            final email = _email.text;
+                            final password = _password.text;
 
-                          if (email.isEmpty || password.isEmpty) {
-                            ErrorSnackBar.showSnackBar(
-                              context,
-                              'Fields cannot be empty',
-                            );
-                            throw FieldsCannotBeEmptyException;
-                          }
-                          try {
-                            _loginToken = await NodeAuthProvider().logIn(
-                              email: email,
-                              password: password,
-                            );
-                            print('Token in client:$_loginToken');
-                            SuccessSnackBar.showSnackBar(
-                              context,
-                              'Logged in successfully',
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NavBarRoots(
-                                  token: _loginToken,
-                                ),
-                              ),
-                            );
-                            // print('ok data aayo');
-                            // print(_loginToken);
-                          } on WrongCredentialsAuthException {
-                            ErrorSnackBar.showSnackBar(
-                              context,
-                              'Wrong Credentials',
-                            );
-                            // } on FieldsCannotBeEmptyException catch (_) {
+                            // if (email.isEmpty || password.isEmpty) {
                             //   ErrorSnackBar.showSnackBar(
                             //     context,
                             //     'Fields cannot be empty',
                             //   );
-                          } on Exception catch (e) {
-                            ErrorSnackBar.showSnackBar(
-                              context,
-                              e.toString(),
-                            );
-                          }
-                          // ErrorSnackBar.showSnackBar(
-                          //   context,
-                          //   'Hmmmmmm',
-                          // );
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 40),
-                          child: Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold),
+                            //   throw FieldsCannotBeEmptyException;
+                            // }
+                            if (_formField.currentState!.validate()) {
+                              try {
+                                _loginToken = await NodeAuthProvider().logIn(
+                                  email: email,
+                                  password: password,
+                                );
+
+                                print('Token in client:$_loginToken');
+
+                                setState(() {
+                                  SuccessSnackBar.showSnackBar(
+                                    context,
+                                    'Logged in successfully',
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NavBarRoots(
+                                        token: _loginToken,
+                                      ),
+                                    ),
+                                  );
+                                });
+
+                                // SuccessSnackBar.showSnackBar(
+                                //   context,
+                                //   'Logged in successfully',
+                                // );
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => NavBarRoots(
+                                //       token: _loginToken,
+                                //     ),
+                                //   ),
+                                // );
+
+                                // print('ok data aayo');
+                                // print(_loginToken);
+                              } on WrongCredentialsAuthException {
+                                ErrorSnackBar.showSnackBar(
+                                  context,
+                                  'Wrong Credentials',
+                                );
+                                // } on FieldsCannotBeEmptyException catch (_) {
+                                //   ErrorSnackBar.showSnackBar(
+                                //     context,
+                                //     'Fields cannot be empty',
+                                //   );
+                              } on Exception catch (e) {
+                                ErrorSnackBar.showSnackBar(
+                                  context,
+                                  e.toString(),
+                                );
+
+                                print('Login Error:${e.toString()}');
+                              }
+                            }
+                            // ErrorSnackBar.showSnackBar(
+                            //   context,
+                            //   'Hmmmmmm',
+                            // );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 40),
+                            child: Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    )),
+                const SizedBox(
+                  height: 20,
                 ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

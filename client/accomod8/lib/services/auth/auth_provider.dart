@@ -42,4 +42,8 @@ abstract class AuthProvider {
   });
 
   Future<String> logOut();
+
+  Future<String> deleteUser({required String id});
+
+  Future<List<Map<String, dynamic>>> getAllUsers();
 }
