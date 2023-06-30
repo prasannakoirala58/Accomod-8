@@ -15,7 +15,6 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-
   final _formField = GlobalKey<FormState>();
   //final _formField = GlobalKey<FormState>();
 
@@ -40,7 +39,6 @@ class _LogInScreenState extends State<LogInScreen> {
   bool _passwordVisible = false;
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SingleChildScrollView(
         child: GestureDetector(
@@ -94,6 +92,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       if (!emailValid) {
                         return "Invalid Email";
                       }
+                      return null;
                     },
                   ),
                 ),
@@ -110,7 +109,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       // fillColor: Colors.white,
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color.fromARGB(255, 242, 162, 131),
                           )),
                       labelText: "Enter Password",
@@ -135,155 +134,141 @@ class _LogInScreenState extends State<LogInScreen> {
                       } else if (_password.text.length < 6) {
                         return "Password lenghth should not be less than 6 characters";
                       }
+                      return null;
                     },
                   ),
                 ),
                 const SizedBox(height: 50),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Material(
-                      color: const Color.fromARGB(255, 213, 127, 93),
-                      borderRadius: BorderRadius.circular(12),
-                      child: InkWell(
-                        onTap: () async {
-                          final email = _email.text;
-                          final password = _password.text;
+                    padding: const EdgeInsets.all(10.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        color: const Color.fromARGB(255, 213, 127, 93),
+                        borderRadius: BorderRadius.circular(12),
+                        child: InkWell(
+                          onTap: () async {
+                            final email = _email.text;
+                            final password = _password.text;
 
-                          // if (email.isEmpty || password.isEmpty) {
-                          //   ErrorSnackBar.showSnackBar(
-                          //     context,
-                          //     'Fields cannot be empty',
-                          //   );
-                          //   throw FieldsCannotBeEmptyException;
-                          // }
-                          if (_formField.currentState!.validate()) {
-
-                            try {
-                              _loginToken = await NodeAuthProvider().logIn(
-                                email: email,
-                                password: password,
-                              );
-
-                              print('Token in client:$_loginToken');
-
-                              setState(() {
-                                SuccessSnackBar.showSnackBar(
-                                  context,
-                                  'Logged in successfully',
+                            // if (email.isEmpty || password.isEmpty) {
+                            //   ErrorSnackBar.showSnackBar(
+                            //     context,
+                            //     'Fields cannot be empty',
+                            //   );
+                            //   throw FieldsCannotBeEmptyException;
+                            // }
+                            if (_formField.currentState!.validate()) {
+                              try {
+                                _loginToken = await NodeAuthProvider().logIn(
+                                  email: email,
+                                  password: password,
                                 );
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NavBarRoots(
-                                      token: _loginToken,
+
+                                print('Token in client:$_loginToken');
+
+                                setState(() {
+                                  SuccessSnackBar.showSnackBar(
+                                    context,
+                                    'Logged in successfully',
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NavBarRoots(
+                                        token: _loginToken,
+                                      ),
                                     ),
-                                  ),
+                                  );
+                                });
+
+                                // SuccessSnackBar.showSnackBar(
+                                //   context,
+                                //   'Logged in successfully',
+                                // );
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => NavBarRoots(
+                                //       token: _loginToken,
+                                //     ),
+                                //   ),
+                                // );
+
+                                // print('ok data aayo');
+                                // print(_loginToken);
+                              } on WrongCredentialsAuthException {
+                                ErrorSnackBar.showSnackBar(
+                                  context,
+                                  'Wrong Credentials',
                                 );
-                              });
+                                // } on FieldsCannotBeEmptyException catch (_) {
+                                //   ErrorSnackBar.showSnackBar(
+                                //     context,
+                                //     'Fields cannot be empty',
+                                //   );
+                              } on Exception catch (e) {
+                                ErrorSnackBar.showSnackBar(
+                                  context,
+                                  e.toString(),
+                                );
 
-                              // SuccessSnackBar.showSnackBar(
-                              //   context,
-                              //   'Logged in successfully',
-                              // );
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => NavBarRoots(
-                              //       token: _loginToken,
-                              //     ),
-                              //   ),
-                              // );
-
-                              SuccessSnackBar.showSnackBar(
-                                context,
-                                'Logged in successfully',
-                              );
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => NavBarRoots(
-                                    token: _loginToken,
-                                  ),
-
-                                ),
-                              );
-
-                              // print('ok data aayo');
-                              // print(_loginToken);
-                            } on WrongCredentialsAuthException {
-                              ErrorSnackBar.showSnackBar(
-                                context,
-                                'Wrong Credentials',
-                              );
-                              // } on FieldsCannotBeEmptyException catch (_) {
-                              //   ErrorSnackBar.showSnackBar(
-                              //     context,
-                              //     'Fields cannot be empty',
-                              //   );
-                            } on Exception catch (e) {
-                              ErrorSnackBar.showSnackBar(
-                                context,
-                                e.toString(),
-                              );
-
-                              print('Login Error:${e.toString()}');
+                                print('Login Error:${e.toString()}');
+                              }
                             }
-                          }
-                          // ErrorSnackBar.showSnackBar(
-                          //   context,
-                          //   'Hmmmmmm',
-                          // );
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 40),
-                          child: Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold),
-
+                            // ErrorSnackBar.showSnackBar(
+                            //   context,
+                            //   'Hmmmmmm',
+                            // );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 40),
+                            child: Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
                       ),
+                    )),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't Have an Account?",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don't Have an Account?",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black54),
-                      ),
-                      //here create an account wala button press garyo vane we will go to signup screen
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpScreen(),
-                              ));
-                        },
-                        child: const Text("Create an Account",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 242, 162, 131),
-                            )),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    //here create an account wala button press garyo vane we will go to signup screen
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            ));
+                      },
+                      child: const Text("Create an Account",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 242, 162, 131),
+                          )),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
