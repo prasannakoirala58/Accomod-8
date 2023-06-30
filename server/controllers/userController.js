@@ -57,11 +57,14 @@ exports.logout_user = (req, res, next) => {
 exports.get_users = async (req, res, next) => {
   try {
     const users = await User.find({});
+    console.log(users);
     res.status(200).json(users);
   } catch (err) {
     next(err);
-  }
+  } 
 };
+
+
 
 /*
     @route GET /api/users/:id
@@ -87,7 +90,7 @@ exports.register_user = async (req, res, next) => {
   try {
     const body = req.body;
     const { profile_picture, document } = req.files || {};
-    // console.log(body.username);
+    // console.log(profile_picture);
 
     let profileCloudUrl = null;
     let documentCloudUrl = null;
@@ -155,8 +158,10 @@ exports.register_user = async (req, res, next) => {
   }
 };
 
+
+
 /*
-    @route POST /api/users/login
+    @route POST /api/users/logi
     @desc Login a user
     @access Public
 */

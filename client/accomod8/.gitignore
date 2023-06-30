@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+.vscode
 
 # IntelliJ related
 *.iml
@@ -44,4 +45,5 @@ app.*.map.json
 /android/app/release
 
 # config files
-lib/config.dart
+/lib/config.dart
+/client/accomod8/lib/config.dart
