@@ -35,10 +35,10 @@ class UserCard extends StatelessWidget {
             '${user['profile']['first_name']} ${user['profile']['last_name']}',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          Text(
-            user['email'],
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
+          // Text(
+          //   user['email'],
+          //   style: TextStyle(fontSize: 14, color: Colors.grey),
+          // ),
         ],
       ),
     );
