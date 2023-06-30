@@ -35,7 +35,8 @@ router.route('/update/:id').patch(verifyUser, uploadUserPhoto, update_user);
 router.route('/updateMyPassword/:id').patch(verifyUser, update_password);
 // router.route('/forgotPassword').put(forgot_password);
 router.route('/forgotPassword').patch(forgot_password);
-router.route('/update/password/reset/:token').put(reset_password);
+// router.route('/update/password/reset/:token').put(reset_password);
+router.route('/resetPassword/:token').patch(reset_password);
 router.route('/delete/:id').delete(verifyUser, delete_user);
 
 module.exports = router;

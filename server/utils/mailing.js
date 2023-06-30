@@ -41,7 +41,7 @@ module.exports = class Email {
       path.join(__dirname, 'email', 'passwordReset.html'),
       'utf-8'
     );
-    // console.log(this.firstName, this.url, this.user);
+    console.log('Yo url ho hai resetToken ko :', this.url);
     // Replace the placeholder with the actual value
     const replacedContent = htmlContent
       .replace('{{firstName}}', this.firstName)
