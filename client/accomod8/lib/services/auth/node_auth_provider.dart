@@ -122,11 +122,11 @@ class NodeAuthProvider implements AuthProvider {
 
   @override
   Future<String> logOut() async {
-    var respose = await http.get(
+    var response = await http.get(
       Uri.parse(logoutUrl),
     );
 
-    var jsonResponse = jsonDecode(respose.body);
+    var jsonResponse = jsonDecode(response.body);
     print('Logout JSON:$jsonResponse');
     if (jsonResponse['status'] == 'success') {
       print('Logout');
@@ -134,5 +134,34 @@ class NodeAuthProvider implements AuthProvider {
       print('Error logging out');
     }
     return jsonResponse['status'];
+  }
+
+  @override
+  Future<String> deleteUser({required String id}) async {
+    var deletingUrl = '$deleteUrl/$id';
+    print('Deleting url: $deletingUrl');
+    var response = await http.delete(Uri.parse(deletingUrl));
+    // var response = await http.delete(Uri.parse(deleteUrl));
+    var jsonResponse = jsonDecode(response.body);
+    print('Delete JSON:$jsonResponse');
+    if (jsonResponse['status'] == 'success') {
+      print('Delete');
+    } else {
+      jsonResponse['status'] = 'failure';
+      print('Error deleting');
+    }
+    // return 'no';
+    return jsonResponse['status'];
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    var response = await http.get(Uri.parse(getUserUrl));
+    var jsonResponse = jsonDecode(response.body);
+    // print('Get-User Response:$jsonResponse');
+    List<Map<String, dynamic>> users =
+        List<Map<String, dynamic>>.from(jsonResponse);
+    // print('Mapped Users:$users');
+    return users;
   }
 }
