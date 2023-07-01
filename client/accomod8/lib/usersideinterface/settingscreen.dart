@@ -44,7 +44,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   const Text(
                     "setting page",
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                   ),
                   TextButton(
                     onPressed: () async {

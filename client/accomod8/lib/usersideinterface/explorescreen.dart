@@ -54,7 +54,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 children: [
                   Text("This is explore page for $username",
                       style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.w500))
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500))
                 ],
               ),
             ),

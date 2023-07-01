@@ -10,7 +10,7 @@ import 'package:accomod8/pages/login_screen.dart';
 
 enum GenderTypeEnum { male, female, others }
 
-enum UserTypeEnum { student, hostelOwner }
+enum UserTypeEnum { user, owner }
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -268,7 +268,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Row(
                     children: [
                       Radio<UserTypeEnum>(
-                        value: UserTypeEnum.student,
+                        value: UserTypeEnum.user,
                         groupValue: _userTypeEnum,
                         onChanged: (val) {
                           setState(() {
@@ -279,9 +279,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SizedBox(
                         width: 0,
                       ),
-                      Text("Student"),
+                      Text("User"),
                       Radio<UserTypeEnum>(
-                        value: UserTypeEnum.hostelOwner,
+                        value: UserTypeEnum.owner,
                         groupValue: _userTypeEnum,
                         onChanged: (val) {
                           setState(() {
@@ -292,7 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         width: 0,
                       ),
-                      const Text("Hostel Owner"),
+                      const Text("Owner"),
                     ],
                   ),
                 ),
@@ -397,77 +397,79 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final password = _password.text;
                       final confirmPassword = _confirmpassword.text;
 
-                      if (firstName.isEmpty ||
-                          lastName.isEmpty ||
-                          email.isEmpty ||
-                          gender.isEmpty ||
-                          username.isEmpty ||
-                          password.isEmpty ||
-                          confirmPassword.isEmpty) {
-                        ErrorSnackBar.showSnackBar(
-                          context,
-                          'Fields cannot be empty',
-                        );
-                        throw FieldsCannotBeEmptyException;
-                      }
-                      try {
-                        // send request to server
-                        final response = await NodeAuthProvider().createUser(
-                          firstName: firstName,
-                          lastName: lastName,
-                          email: email,
-                          gender: gender,
-                          username: username,
-                          password: password,
-                          matchingPassword: confirmPassword,
-                          userType: 'user',
-                          image: File(selectedImageFromGallery!.path),
-                          document: File(selectedImageFromCamera!.path),
-                        );
+                      // if (firstName.isEmpty ||
+                      //     lastName.isEmpty ||
+                      //     email.isEmpty ||
+                      //     gender.isEmpty ||
+                      //     username.isEmpty ||
+                      //     password.isEmpty ||
+                      //     confirmPassword.isEmpty) {
+                      //   ErrorSnackBar.showSnackBar(
+                      //     context,
+                      //     'Fields cannot be empty',
+                      //   );
+                      //   throw FieldsCannotBeEmptyException;
+                      // }
+                      if (_formField.currentState!.validate()) {
+                        try {
+                          // send request to server
+                          final response = await NodeAuthProvider().createUser(
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            gender: gender,
+                            username: username,
+                            password: password,
+                            matchingPassword: confirmPassword,
+                            userType: 'user',
+                            image: File(selectedImageFromGallery!.path),
+                            document: File(selectedImageFromCamera!.path),
+                          );
 
-                        if (response == 'success') {
-                          SuccessSnackBar.showSnackBar(
-                            context,
-                            'Signed up sucessfully',
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LogInScreen(),
-                            ),
-                          );
-                        } else {
+                          if (response == 'success') {
+                            SuccessSnackBar.showSnackBar(
+                              context,
+                              'Signed up sucessfully',
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LogInScreen(),
+                              ),
+                            );
+                          } else {
+                            ErrorSnackBar.showSnackBar(
+                              context,
+                              'Username and email should be unique',
+                            );
+                          }
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => const LogInScreen(),
+                          //     ));
+                          //Navigator.push(
+                          //context,
+                          //MaterialPageRoute(
+                          //builder: (context) => SignUpScreen(),
+                          //)); //Navigator.push(context, MaterialPageRoute(builder: (context)));
+                          // } on FieldsCannotBeEmptyException catch (_) {
+                          //   ErrorSnackBar.showSnackBar(
+                          //     context,
+                          //     'Fields cannot be empty',
+                          //   );
+                        } on PasswordDoesNotMatchAuthException {
                           ErrorSnackBar.showSnackBar(
                             context,
-                            'Username and email should be unique',
+                            'Password does not match',
+                          );
+                        } on Exception catch (e) {
+                          print(e.toString());
+                          ErrorSnackBar.showSnackBar(
+                            context,
+                            'e.toString()',
                           );
                         }
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => const LogInScreen(),
-                        //     ));
-                        //Navigator.push(
-                        //context,
-                        //MaterialPageRoute(
-                        //builder: (context) => SignUpScreen(),
-                        //)); //Navigator.push(context, MaterialPageRoute(builder: (context)));
-                        // } on FieldsCannotBeEmptyException catch (_) {
-                        //   ErrorSnackBar.showSnackBar(
-                        //     context,
-                        //     'Fields cannot be empty',
-                        //   );
-                      } on PasswordDoesNotMatchAuthException {
-                        ErrorSnackBar.showSnackBar(
-                          context,
-                          'Password does not match',
-                        );
-                      } on Exception catch (e) {
-                        print(e.toString());
-                        ErrorSnackBar.showSnackBar(
-                          context,
-                          'e.toString()',
-                        );
                       }
                     },
                     child: const Padding(
