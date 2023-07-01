@@ -7,6 +7,12 @@ const QueryHandler = require('../utils/queryHandler');
 const cloudinary = require('cloudinary');
 const upload = require('../utils/multerConfig');
 
+// Multer middleware for uploading user photo and document
+exports.uploadHostelPhoto = upload.fields([
+  { name: 'images', maxCount: 10 },
+  { name: 'document', maxCount: 1 },
+]);
+
 /*
     @desc gets token from request header
     @access Private
@@ -77,27 +83,29 @@ exports.get_hostel = async (req, res, next) => {
 exports.register_hostel = async (req, res, next) => {
   try {
     const body = req.body;
-    const imagescloud = [];
-    const imagescloudURL = [];
+    const { images, document } = req.files || {};
+    console.log('Yo hostel ko register body:', body);
+    console.log('Yo hostel ko image:', images);
+    const documentCloudUrl = null;
+    const imagesClourUrl = [];
 
-    const documentcloud = await cloudinary.v2.uploader.upload(body.document, {
-      folder: 'Hosteldocuments',
-      width: 1020,
-      crop: 'scale',
-    });
+    if (document) {
+      documentCloudUrl = await handleCloudinaryUpload(
+        document[0].buffer,
+        'tempDoc.jpg',
+        'documents',
+        `document_${Date.now()}`
+      );
+    }
 
     for (let i = 0; i < body.images.length; i++) {
-      imagescloud[i] = await cloudinary.v2.uploader.upload(body.images[i], {
-        folder: 'hostelimages',
-        width: 1020,
-        crop: 'scale',
-      });
-      // console.log("images in cloud", imagescloud[i]);
+      imagesClourUrl[i] = await handleCloudinaryUpload(
+        images[i].buffer,
+        'tempImg.jpg',
+        'images',
+        `image_${Date.now()}`
+      );
     }
-    for (let i = 0; i < imagescloud.length; i++) {
-      imagescloudURL[i] = imagescloud[i].secure_url;
-    }
-    // console.log("images in cloud URL", imagescloudURL);
 
     const token = getToken(req);
     const decodedToken = jwt.verify(token, process.env.SECRET);
@@ -119,8 +127,8 @@ exports.register_hostel = async (req, res, next) => {
       },
       description: body.description,
       for_gender: body.for_gender,
-      document: documentcloud.secure_url,
-      images: imagescloudURL || [],
+      document: documentCloudUrl,
+      images: imagesClourUrl || [],
       verified: body.verified,
       owner: user._id,
       amenities: body.amenities || [],
@@ -155,11 +163,103 @@ exports.register_hostel = async (req, res, next) => {
       await newAnalytics.save();
     }
 
-    res.status(201).json(savedHostel);
+    res.status(201).json({
+      status: 'success',
+      data: savedHostel,
+    });
+    // res.status(201).json({ msg: 'The endpoint ran successfully!' });
   } catch (err) {
     next(err);
   }
 };
+
+// exports.register_hostel = async (req, res, next) => {
+//   try {
+//     const body = req.body;
+//     console.log(body);
+//     const imagescloud = [];
+//     const imagescloudURL = [];
+
+//     const documentcloud = await cloudinary.v2.uploader.upload(body.document, {
+//       folder: 'Hosteldocuments',
+//       width: 1020,
+//       crop: 'scale',
+//     });
+
+//     for (let i = 0; i < body.images.length; i++) {
+//       imagescloud[i] = await cloudinary.v2.uploader.upload(body.images[i], {
+//         folder: 'hostelimages',
+//         width: 1020,
+//         crop: 'scale',
+//       });
+//       // console.log("images in cloud", imagescloud[i]);
+//     }
+//     for (let i = 0; i < imagescloud.length; i++) {
+//       imagescloudURL[i] = imagescloud[i].secure_url;
+//     }
+//     // console.log("images in cloud URL", imagescloudURL);
+
+//     const token = getToken(req);
+//     const decodedToken = jwt.verify(token, process.env.SECRET);
+
+//     console.log('decodedToken', decodedToken);
+
+//     if (!token || !decodedToken.id) {
+//       return res.status(401).json({ error: 'token missing or invalid' });
+//     }
+
+//     const user = await User.findById(decodedToken.id);
+
+//     const hostel = new Hostel({
+//       name: body.name,
+//       address: body.address,
+//       location: {
+//         type: 'Point',
+//         coordinates: [body.latitude, body.longitude],
+//       },
+//       description: body.description,
+//       for_gender: body.for_gender,
+//       document: documentcloud.secure_url,
+//       images: imagescloudURL || [],
+//       verified: body.verified,
+//       owner: user._id,
+//       amenities: body.amenities || [],
+//       rooms: body.rooms || [],
+//       reviews: [],
+//     });
+//     await hostel.compute_availability();
+
+//     const savedHostel = await hostel.save();
+//     user.hostel_listings = user.hostel_listings.concat(savedHostel._id);
+//     await user.save();
+
+//     // now update the analytics
+//     const analytics = await Analytics.findOne({ 'date.year': new Date().getFullYear() });
+//     if (analytics) {
+//       const month = new Date().getMonth();
+//       analytics.date.month[month].registrations += 1;
+//       await analytics.save();
+//     } else {
+//       const newAnalytics = new Analytics({
+//         date: {
+//           year: new Date().getFullYear(),
+//           month: Array.from({ length: 12 }, () => ({
+//             visits: 0,
+//             registrations: 0,
+//             interactions: 0,
+//           })),
+//         },
+//       });
+//       const month = new Date().getMonth();
+//       newAnalytics.date.month[month].registrations += 1;
+//       await newAnalytics.save();
+//     }
+
+//     res.status(201).json(savedHostel);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 /*
     @route PUT /api/hostels/:id
