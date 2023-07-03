@@ -191,6 +191,8 @@ exports.register_hostel = async (req, res, next) => {
   }
 };
 
+
+
 // exports.register_hostel = async (req, res, next) => {
 //   try {
 //     const body = req.body;
