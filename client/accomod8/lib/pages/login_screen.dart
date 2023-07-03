@@ -1,5 +1,6 @@
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
+import 'package:accomod8/services/cookie/cookie_util.dart';
 import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:accomod8/utility/snackbar/success_snackbar.dart';
@@ -18,6 +19,8 @@ class _LogInScreenState extends State<LogInScreen> {
   final _formField = GlobalKey<FormState>();
   //final _formField = GlobalKey<FormState>();
 
+  final cookieUtil = CookieUtil();
+
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final String _loginToken;
@@ -26,6 +29,7 @@ class _LogInScreenState extends State<LogInScreen> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+
     super.initState();
   }
 
@@ -165,8 +169,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                   email: email,
                                   password: password,
                                 );
-
-                                print('Token in client:$_loginToken');
+                                // cookieUtil.retrieveDataFromCookie();
 
                                 setState(() {
                                   SuccessSnackBar.showSnackBar(

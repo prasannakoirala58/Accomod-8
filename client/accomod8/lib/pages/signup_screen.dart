@@ -152,11 +152,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                   child: TextFormField(
                     controller: _lastname,
                     enableSuggestions: false,
@@ -181,7 +182,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
@@ -261,7 +262,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Center(
@@ -276,10 +277,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           });
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 0,
                       ),
-                      Text("User"),
+                      const Text("User"),
                       Radio<UserTypeEnum>(
                         value: UserTypeEnum.owner,
                         groupValue: _userTypeEnum,
@@ -393,6 +394,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final lastName = _lastname.text;
                       final email = _email.text;
                       final gender = _genderTypeEnum.toString().split('.').last;
+                      final userType = _userTypeEnum.toString().split('.').last;
                       final username = _username.text;
                       final password = _password.text;
                       final confirmPassword = _confirmpassword.text;
@@ -421,27 +423,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             username: username,
                             password: password,
                             matchingPassword: confirmPassword,
-                            userType: 'user',
+                            userType: userType,
                             image: File(selectedImageFromGallery!.path),
                             document: File(selectedImageFromCamera!.path),
                           );
 
                           if (response == 'success') {
-                            SuccessSnackBar.showSnackBar(
-                              context,
-                              'Signed up sucessfully',
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LogInScreen(),
-                              ),
-                            );
+                            setState(() {
+                              SuccessSnackBar.showSnackBar(
+                                context,
+                                'Signed up sucessfully',
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LogInScreen(),
+                                ),
+                              );
+                            });
                           } else {
-                            ErrorSnackBar.showSnackBar(
-                              context,
-                              'Username and email should be unique',
-                            );
+                            setState(() {
+                              ErrorSnackBar.showSnackBar(
+                                context,
+                                'Username and email should be unique',
+                              );
+                            });
                           }
                           // Navigator.push(
                           //     context,
