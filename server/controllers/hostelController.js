@@ -81,25 +81,27 @@ exports.get_hostel = async (req, res, next) => {
     @desc Register a new hostel
     @access Public
 */
+
 exports.register_hostel = async (req, res, next) => {
+  let user;
   try {
     const body = req.body;
     const { images, document } = req.files || {};
     console.log('Yo hostel ko register body:', body);
     console.log('Yo hostel ko image:', images);
-    const documentCloudUrl = null;
+    let documentCloudUrl = null;
     const imagesClourUrl = [];
 
     const token = getToken(req);
     const decodedToken = jwt.verify(token, process.env.SECRET);
 
-    console.log('decodedToken', decodedToken);
+    // console.log('decodedToken', decodedToken);
 
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
 
-    const user = await User.findById(decodedToken.id);
+    user = await User.findById(decodedToken.id);
 
     if (document) {
       documentCloudUrl = await handleCloudinaryUpload(
@@ -110,13 +112,15 @@ exports.register_hostel = async (req, res, next) => {
       );
     }
 
-    for (let i = 0; i < body.images.length; i++) {
-      imagesClourUrl[i] = await handleCloudinaryUpload(
-        images[i].buffer,
-        'tempImg.jpg',
-        'hostelImages',
-        `${user.username}_image`
-      );
+    if(images) {
+      for (let i = 0; i < images.length; i++) {
+        imagesClourUrl[i] = await handleCloudinaryUpload(
+          images[i].buffer,
+          'tempImg.jpg',
+          'hostelImages',
+          `${user.username}_image`
+        );
+      }
     }
 
     const hostel = new Hostel({
@@ -170,9 +174,24 @@ exports.register_hostel = async (req, res, next) => {
     });
     // res.status(201).json({ msg: 'The endpoint ran successfully!' });
   } catch (err) {
+    if (user) {
+      // If there was an error saving the user, delete the uploaded profile picture and document from Cloudinary
+      if (user.images) {
+        for (let i = 0; i < user.images.length; i++) {
+
+          await deleteFromCloudinary(user.images[i]);
+        }
+      }
+      if (user.profile.document) {
+        await deleteFromCloudinary(user.profile.document);
+      }
+    }
+
     next(err);
   }
 };
+
+
 
 // exports.register_hostel = async (req, res, next) => {
 //   try {
