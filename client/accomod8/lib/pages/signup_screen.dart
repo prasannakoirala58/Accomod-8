@@ -79,9 +79,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Image.asset(
-                    "images/acclog.png",
-                    height: 100,
-                    width: 150,
+                    "images/xdd.png",
+                    height: 170,
+                    width: 200,
                   ),
                 ),
                 Padding(

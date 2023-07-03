@@ -81,13 +81,15 @@ exports.get_hostel = async (req, res, next) => {
     @desc Register a new hostel
     @access Public
 */
+
 exports.register_hostel = async (req, res, next) => {
+  let hostel;
   try {
     const body = req.body;
     const { images, document } = req.files || {};
     console.log('Yo hostel ko register body:', body);
     console.log('Yo hostel ko image:', images);
-    const documentCloudUrl = null;
+    let documentCloudUrl = null;
     const imagesClourUrl = [];
 
     const token = getToken(req);
@@ -110,16 +112,18 @@ exports.register_hostel = async (req, res, next) => {
       );
     }
 
-    for (let i = 0; i < body.images.length; i++) {
-      imagesClourUrl[i] = await handleCloudinaryUpload(
-        images[i].buffer,
-        'tempImg.jpg',
-        'hostelImages',
-        `${user.username}_image`
-      );
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        imagesClourUrl[i] = await handleCloudinaryUpload(
+          images[i].buffer,
+          'tempImg.jpg',
+          'hostelImages',
+          `${user.username}_image`
+        );
+      }
     }
 
-    const hostel = new Hostel({
+    hostel = new Hostel({
       name: body.name,
       address: body.address,
       location: {
@@ -136,6 +140,7 @@ exports.register_hostel = async (req, res, next) => {
       rooms: body.rooms || [],
       reviews: [],
     });
+
     await hostel.compute_availability();
 
     const savedHostel = await hostel.save();
@@ -168,8 +173,21 @@ exports.register_hostel = async (req, res, next) => {
       status: 'success',
       data: savedHostel,
     });
-    // res.status(201).json({ msg: 'The endpoint ran successfully!' });
   } catch (err) {
+    if (hostel) {
+      // If there was an error saving the hostel, delete the uploaded
+      // hostel images and document from Cloudinary
+      if (hostel.images) {
+        for (let i = 0; i < hostel.images.length; i++) {
+          await deleteFromCloudinary(hostel.images[i]);
+        }
+      }
+
+      if (hostel.document) {
+        await deleteFromCloudinary(hostel.document);
+      }
+    }
+
     next(err);
   }
 };
