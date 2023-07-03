@@ -1,14 +1,19 @@
+import 'package:accomod8/ownersideinterface/ownernavbar.dart';
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
+import 'package:accomod8/services/cookie/cookie_util.dart';
 import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth/auth_exceptions.dart';
+import '../utility/string_formatter/user_data_formatter.dart';
 
 class LogInScreen extends StatefulWidget {
-  const LogInScreen({super.key});
+  const LogInScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<LogInScreen> createState() => _LogInScreenState();
@@ -18,6 +23,8 @@ class _LogInScreenState extends State<LogInScreen> {
   final _formField = GlobalKey<FormState>();
   //final _formField = GlobalKey<FormState>();
 
+  final cookieUtil = CookieUtil();
+
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final String _loginToken;
@@ -26,6 +33,7 @@ class _LogInScreenState extends State<LogInScreen> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+
     super.initState();
   }
 
@@ -165,22 +173,39 @@ class _LogInScreenState extends State<LogInScreen> {
                                   email: email,
                                   password: password,
                                 );
+                                // cookieUtil.retrieveDataFromCookie();
+                                print('Token in Login:$_loginToken');
 
-                                print('Token in client:$_loginToken');
+                                Map<String, dynamic> extractedData =
+                                    UserDataFormatter.extractValues(
+                                        _loginToken);
+                                final userType = extractedData['usertype'];
+                                // print('Usertype:$userType');
 
                                 setState(() {
                                   SuccessSnackBar.showSnackBar(
                                     context,
                                     'Logged in successfully',
                                   );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => NavBarRoots(
-                                        token: _loginToken,
+                                  if (userType == 'user') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => NavBarRoots(
+                                          token: _loginToken,
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => OwnerNavBar(
+                                          token: _loginToken,
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 });
 
                                 // SuccessSnackBar.showSnackBar(
