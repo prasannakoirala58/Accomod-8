@@ -22,7 +22,7 @@ class CookieUtil {
   Future<void> retrieveDataFromCookie({
     required String url,
   }) async {
-    print('ok cha hai');
+    // print('ok cha hai');
 
     final response = await http.get(Uri.parse(url));
     // final body = response.body;

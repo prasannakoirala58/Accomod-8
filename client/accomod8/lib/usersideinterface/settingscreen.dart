@@ -12,9 +12,9 @@ class SettingScreen extends StatefulWidget {
   final String token;
 
   const SettingScreen({
-    super.key,
+    Key? key,
     required this.token,
-  });
+  }) : super(key: key);
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();

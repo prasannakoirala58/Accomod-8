@@ -1,8 +1,15 @@
+import 'package:accomod8/ownersideinterface/addhostel.dart';
+import 'package:accomod8/ownersideinterface/managehostel.dart';
+import 'package:accomod8/ownersideinterface/ownersetting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OwnerNavBar extends StatefulWidget {
-  const OwnerNavBar({super.key});
+  final String token;
+  const OwnerNavBar({
+    Key? key,
+    required this.token,
+  }) : super(key: key);
 
   @override
   State<OwnerNavBar> createState() => _OwnerNavBarState();
@@ -10,14 +17,16 @@ class OwnerNavBar extends StatefulWidget {
 
 class _OwnerNavBarState extends State<OwnerNavBar> {
   int _selectedIndex = 0;
-  final _screens = [
-    //HomeScreen
-    Container(),
-    //kk
-    Container(),
-    //kk
-    Container(),
-  ];
+  List<Widget> get _screens => [
+        //HomeScreen
+        const AddHostel(),
+        //kk
+        const ManageHostel(),
+        //kk
+        OwnerSetting(
+          token: widget.token,
+        ),
+      ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
