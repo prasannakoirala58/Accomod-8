@@ -6,6 +6,7 @@ const Analytics = require('../models/analytics');
 const QueryHandler = require('../utils/queryHandler');
 const cloudinary = require('cloudinary');
 const upload = require('../utils/multerConfig');
+const { handleCloudinaryUpload, deleteFromCloudinary } = require('../utils/cloudinaryUtils');
 
 // Multer middleware for uploading user photo and document
 exports.uploadHostelPhoto = upload.fields([
@@ -89,6 +90,17 @@ exports.register_hostel = async (req, res, next) => {
     const documentCloudUrl = null;
     const imagesClourUrl = [];
 
+    const token = getToken(req);
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+
+    console.log('decodedToken', decodedToken);
+
+    if (!token || !decodedToken.id) {
+      return res.status(401).json({ error: 'token missing or invalid' });
+    }
+
+    const user = await User.findById(decodedToken.id);
+
     if (document) {
       documentCloudUrl = await handleCloudinaryUpload(
         document[0].buffer,
@@ -102,21 +114,10 @@ exports.register_hostel = async (req, res, next) => {
       imagesClourUrl[i] = await handleCloudinaryUpload(
         images[i].buffer,
         'tempImg.jpg',
-        'images',
-        `image_${Date.now()}`
+        'hostelImages',
+        `${user.username}_image`
       );
     }
-
-    const token = getToken(req);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-
-    console.log('decodedToken', decodedToken);
-
-    if (!token || !decodedToken.id) {
-      return res.status(401).json({ error: 'token missing or invalid' });
-    }
-
-    const user = await User.findById(decodedToken.id);
 
     const hostel = new Hostel({
       name: body.name,
