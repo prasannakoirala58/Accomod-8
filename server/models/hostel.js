@@ -35,7 +35,7 @@ const hostelSchema = new mongoose.Schema(
       required: true,
     },
     for_gender: {
-      type: Number,
+      type: String,
       required: true,
     },
     images: [
