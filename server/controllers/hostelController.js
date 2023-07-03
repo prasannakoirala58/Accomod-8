@@ -83,7 +83,7 @@ exports.get_hostel = async (req, res, next) => {
 */
 
 exports.register_hostel = async (req, res, next) => {
-  let user;
+  let hostel;
   try {
     const body = req.body;
     const { images, document } = req.files || {};
@@ -95,13 +95,13 @@ exports.register_hostel = async (req, res, next) => {
     const token = getToken(req);
     const decodedToken = jwt.verify(token, process.env.SECRET);
 
-    // console.log('decodedToken', decodedToken);
+    console.log('decodedToken', decodedToken);
 
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
 
-    user = await User.findById(decodedToken.id);
+    const user = await User.findById(decodedToken.id);
 
     if (document) {
       documentCloudUrl = await handleCloudinaryUpload(
@@ -112,7 +112,7 @@ exports.register_hostel = async (req, res, next) => {
       );
     }
 
-    if(images) {
+    if (images) {
       for (let i = 0; i < images.length; i++) {
         imagesClourUrl[i] = await handleCloudinaryUpload(
           images[i].buffer,
@@ -123,7 +123,7 @@ exports.register_hostel = async (req, res, next) => {
       }
     }
 
-    const hostel = new Hostel({
+    hostel = new Hostel({
       name: body.name,
       address: body.address,
       location: {
@@ -140,6 +140,7 @@ exports.register_hostel = async (req, res, next) => {
       rooms: body.rooms || [],
       reviews: [],
     });
+
     await hostel.compute_availability();
 
     const savedHostel = await hostel.save();
@@ -172,26 +173,24 @@ exports.register_hostel = async (req, res, next) => {
       status: 'success',
       data: savedHostel,
     });
-    // res.status(201).json({ msg: 'The endpoint ran successfully!' });
   } catch (err) {
-    if (user) {
-      // If there was an error saving the user, delete the uploaded profile picture and document from Cloudinary
-      if (user.images) {
-        for (let i = 0; i < user.images.length; i++) {
-
-          await deleteFromCloudinary(user.images[i]);
+    if (hostel) {
+      // If there was an error saving the hostel, delete the uploaded
+      // hostel images and document from Cloudinary
+      if (hostel.images) {
+        for (let i = 0; i < hostel.images.length; i++) {
+          await deleteFromCloudinary(hostel.images[i]);
         }
       }
-      if (user.profile.document) {
-        await deleteFromCloudinary(user.profile.document);
+
+      if (hostel.document) {
+        await deleteFromCloudinary(hostel.document);
       }
     }
 
     next(err);
   }
 };
-
-
 
 // exports.register_hostel = async (req, res, next) => {
 //   try {

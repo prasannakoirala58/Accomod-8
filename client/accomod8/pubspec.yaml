@@ -44,6 +44,7 @@ dependencies:
   dio: ^5.2.1+1
   image_picker: ^1.0.0
   carousel_slider: ^4.2.1
+  cookie_jar: ^4.0.5
 
 dev_dependencies:
   flutter_test:

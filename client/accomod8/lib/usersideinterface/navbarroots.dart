@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 class NavBarRoots extends StatefulWidget {
   final String token;
   const NavBarRoots({
-    super.key,
+    Key? key,
     required this.token,
-  });
+  }) : super(key: key);
 
   @override
   State<NavBarRoots> createState() => _NavBarRootsState();
