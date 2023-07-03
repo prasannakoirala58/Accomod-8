@@ -61,10 +61,8 @@ exports.get_users = async (req, res, next) => {
     res.status(200).json(users);
   } catch (err) {
     next(err);
-  } 
+  }
 };
-
-
 
 /*
     @route GET /api/users/:id
@@ -145,7 +143,8 @@ exports.register_user = async (req, res, next) => {
   } catch (err) {
     // console.log("Yo cloudinary ko error hota?", err);
     if (user) {
-      // If there was an error saving the user, delete the uploaded profile picture and document from Cloudinary
+      // If there was an error saving the user, delete the uploaded
+      // profile picture and document from Cloudinary
       if (user.profile.profile_picture) {
         await deleteFromCloudinary(user.profile.profile_picture);
       }
@@ -157,8 +156,6 @@ exports.register_user = async (req, res, next) => {
     next(err);
   }
 };
-
-
 
 /*
     @route POST /api/users/logi
@@ -204,6 +201,7 @@ exports.login_user = async (req, res, next) => {
           id: user._id,
           username: user.username,
           profile_picture: user.profile.profile_picture,
+          usertype: user.usertype.typeof_user,
         },
       });
   } catch (err) {
