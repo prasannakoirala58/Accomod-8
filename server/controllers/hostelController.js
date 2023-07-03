@@ -95,13 +95,21 @@ exports.register_hostel = async (req, res, next) => {
     const token = getToken(req);
     const decodedToken = jwt.verify(token, process.env.SECRET);
 
+
     // console.log('decodedToken', decodedToken);
+
+    console.log('decodedToken', decodedToken);
+
 
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
 
+
+    const user = await User.findById(decodedToken.id);
+
     user = await User.findById(decodedToken.id);
+
 
     if (document) {
       documentCloudUrl = await handleCloudinaryUpload(
@@ -112,6 +120,15 @@ exports.register_hostel = async (req, res, next) => {
       );
     }
 
+
+    for (let i = 0; i < body.images.length; i++) {
+      imagesClourUrl[i] = await handleCloudinaryUpload(
+        images[i].buffer,
+        'tempImg.jpg',
+        'hostelImages',
+        `${user.username}_image`
+      );
+
     if(images) {
       for (let i = 0; i < images.length; i++) {
         imagesClourUrl[i] = await handleCloudinaryUpload(
@@ -121,6 +138,7 @@ exports.register_hostel = async (req, res, next) => {
           `${user.username}_image`
         );
       }
+
     }
 
     const hostel = new Hostel({
