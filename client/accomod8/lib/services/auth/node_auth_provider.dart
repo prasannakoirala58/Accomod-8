@@ -1,3 +1,4 @@
+import 'package:accomod8/services/cookie/cookie_manager.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -7,7 +8,6 @@ import 'package:accomod8/services/auth/auth_provider.dart';
 // import 'package:accomod8/services/auth/auth_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../cookie/cookie_util.dart';
 import 'auth_exceptions.dart';
 
 class NodeAuthProvider implements AuthProvider {
@@ -90,39 +90,70 @@ class NodeAuthProvider implements AuthProvider {
     required String email,
     required String password,
   }) async {
+    CookieManager cookieManager = CookieManager.instance;
+    await cookieManager.initCookie();
+    Dio dio = Dio();
+    dio.interceptors.add(cookieManager);
     var loginUserBody = {
       "email": email,
       "password": password,
     };
-    var response = await http.post(
-      Uri.parse(loginUrl),
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      body: jsonEncode(loginUserBody),
-    );
+    try {
+      var response = await dio.post(
+        loginUrl,
+        options: Options(
+          headers: {'Content-Type': 'application/json;charset=UTF-8'},
+        ),
+        data: jsonEncode(loginUserBody),
+      );
+      print('Login Auth Raw Response: $response');
+      var jsonResponse = response.data;
+      print(jsonResponse);
 
-    var jsonResponse = jsonDecode(response.body);
+      if (jsonResponse['status'] == 'success') {
+        var token = jsonResponse['data'];
 
-    print(jsonResponse);
-
-    if (jsonResponse['status'] == 'success') {
-      var token = jsonResponse['data'];
-      // prefs.setString(
-      //   'data',
-      //   token,
-      // );
-
-      // CookieUtil.storeCookies(jsonResponse);
-      CookieUtil().retrieveDataFromCookie(url: loginUrl);
-
-      print('Success pachi ko token: ${token.toString()}');
-      print('login');
-      return token.toString();
-    } else {
-      print('no token');
+        print('Success pachi ko token: ${token.toString()}');
+        print('login');
+        return token.toString();
+      } else {
+        print('no token');
+        throw WrongCredentialsAuthException();
+      }
+    } on Exception catch (e) {
+      print('Login Auth Exception: $e');
       throw WrongCredentialsAuthException();
     }
+
+    // var response = await http.post(
+    //   Uri.parse(loginUrl),
+    //   headers: {
+    //     'Content-Type': 'application/json;charset=UTF-8',
+    //   },
+    //   body: jsonEncode(loginUserBody),
+    // );
+
+    // var jsonResponse = jsonDecode(response.body);
+
+    // print(jsonResponse);
+
+    // if (jsonResponse['status'] == 'success') {
+    //   var token = jsonResponse['data'];
+    //   // prefs.setString(
+    //   //   'data',
+    //   //   token,
+    //   // );
+
+    //   // CookieUtil.storeCookies(jsonResponse);
+    //   CookieUtil().retrieveDataFromCookie(url: loginUrl);
+
+    //   print('Success pachi ko token: ${token.toString()}');
+    //   print('login');
+    //   return token.toString();
+    // } else {
+    //   print('no token');
+    //   throw WrongCredentialsAuthException();
+    // }
   }
 
   @override

@@ -19,7 +19,9 @@ class _OwnerNavBarState extends State<OwnerNavBar> {
   int _selectedIndex = 0;
   List<Widget> get _screens => [
         //HomeScreen
-        const AddHostel(),
+        AddHostel(
+          token: widget.token,
+        ),
         //kk
         const ManageHostel(),
         //kk
