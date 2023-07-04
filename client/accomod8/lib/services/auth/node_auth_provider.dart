@@ -1,4 +1,4 @@
-import 'package:accomod8/services/cookie/cookie_manager.dart';
+import 'package:accomod8/services/cookie/dio_instance.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -90,10 +90,10 @@ class NodeAuthProvider implements AuthProvider {
     required String email,
     required String password,
   }) async {
-    CookieManager cookieManager = CookieManager.instance;
-    await cookieManager.initCookie();
-    Dio dio = Dio();
-    dio.interceptors.add(cookieManager);
+    // to instantiate dio for cookie management
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+
     var loginUserBody = {
       "email": email,
       "password": password,
@@ -158,36 +158,70 @@ class NodeAuthProvider implements AuthProvider {
 
   @override
   Future<String> logOut() async {
-    var response = await http.get(
-      Uri.parse(logoutUrl),
-    );
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
 
-    var jsonResponse = jsonDecode(response.body);
-    print('Logout JSON:$jsonResponse');
-    if (jsonResponse['status'] == 'success') {
-      print('Logout');
-    } else {
-      print('Error logging out');
+    try {
+      var response = await dio.get(logoutUrl);
+      var jsonResponse = response.data;
+      print('Logout JSON:$jsonResponse');
+      if (jsonResponse['status'] == 'success') {
+        print('Logout');
+      } else {
+        print('Error logging out');
+      }
+      return jsonResponse['status'];
+    } on Exception catch (e) {
+      print('Auth Logout Error: $e');
+      throw UnableToLogoutAuthException;
     }
-    return jsonResponse['status'];
   }
 
   @override
   Future<String> deleteUser({required String id}) async {
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+
     var deletingUrl = '$deleteUrl/$id';
     print('Deleting url: $deletingUrl');
-    var response = await http.delete(Uri.parse(deletingUrl));
-    // var response = await http.delete(Uri.parse(deleteUrl));
-    var jsonResponse = jsonDecode(response.body);
-    print('Delete JSON:$jsonResponse');
-    if (jsonResponse['status'] == 'success') {
-      print('Delete');
-    } else {
-      jsonResponse['status'] = 'failure';
-      print('Error deleting');
+
+    try {
+      var response = await dio.delete(
+        deletingUrl,
+        options: Options(
+          headers: {'Content-Type': 'application/json;charset=UTF-8'},
+        ),
+      );
+
+      // var response = await http.delete(Uri.parse(deletingUrl));
+      // var response = await http.delete(Uri.parse(deleteUrl));
+      var jsonResponse = response.data;
+      print('Delete JSON:$jsonResponse');
+      if (jsonResponse['status'] == 'success') {
+        print('Delete');
+      } else {
+        jsonResponse['status'] = 'failure';
+        print('Error deleting');
+      }
+      // return 'no';
+      return jsonResponse['status'];
+    } on Exception catch (e) {
+      print('Delete Auth Error:$e');
+      throw UnableToDeleteAuthException();
     }
-    // return 'no';
-    return jsonResponse['status'];
+
+    // var response = await http.delete(Uri.parse(deletingUrl));
+    // // var response = await http.delete(Uri.parse(deleteUrl));
+    // var jsonResponse = jsonDecode(response.body);
+    // print('Delete JSON:$jsonResponse');
+    // if (jsonResponse['status'] == 'success') {
+    //   print('Delete');
+    // } else {
+    //   jsonResponse['status'] = 'failure';
+    //   print('Error deleting');
+    // }
+    // // return 'no';
+    // return jsonResponse['status'];
   }
 
   @override

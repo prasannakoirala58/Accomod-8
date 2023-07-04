@@ -4,14 +4,14 @@ import 'package:accomod8/config.dart';
 import 'package:accomod8/services/hostel/hostel_provider.dart';
 import 'package:dio/dio.dart';
 
-import '../cookie/cookie_manager.dart';
+import '../cookie/dio_instance.dart';
 
 class NodeHostelProvider implements HostelProvider {
   @override
   Future<String> registerHostel({
     required String name,
     required String address,
-    required bool isFeatured,
+    // required bool isFeatured,
     required double latitude,
     required double longitude,
     required String description,
@@ -24,10 +24,13 @@ class NodeHostelProvider implements HostelProvider {
     required List<String> reviews,
     required String ownerId,
   }) async {
-    CookieManager cookieManager = CookieManager.instance;
-    await cookieManager.initCookie();
-    Dio dio = Dio();
-    dio.interceptors.add(cookieManager);
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+
+    // CookieManager cookieManager = CookieManager.instance;
+    // await cookieManager.initCookie();
+    // Dio dio = Dio();
+    // dio.interceptors.add(cookieManager);
 
     // String documentFileName = document.path.split('/').last;
 
@@ -82,10 +85,22 @@ class NodeHostelProvider implements HostelProvider {
         ),
       );
       print('Raw Response:$formDataResponse');
+      var responseBody = formDataResponse.data;
+      if (responseBody['status'] == 'success') {
+        print('Resgister bhayo');
+      } else {
+        responseBody['status'] = 'failure';
+      }
+      return responseBody['status'];
     } on Exception catch (e) {
       print('Register Hostel Error: $e');
+      return 'failure';
     }
+  }
 
-    return 'cringe';
+  @override
+  Future<void> initialize() {
+    // TODO: implement initialize
+    throw UnimplementedError();
   }
 }

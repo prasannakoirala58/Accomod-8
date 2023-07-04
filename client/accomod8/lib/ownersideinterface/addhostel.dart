@@ -1,6 +1,8 @@
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
+import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 
+import '../utility/snackbar/success_snackbar.dart';
 import '../utility/string_formatter/user_data_formatter.dart';
 
 class AddHostel extends StatefulWidget {
@@ -19,6 +21,9 @@ class _AddHostelState extends State<AddHostel> {
   late String id;
   @override
   void initState() {
+    // WidgetsFlutterBinding.ensureInitialized();
+    // await NodeHostelProvider().initialize();
+
     token = widget.token;
 
     try {
@@ -49,10 +54,10 @@ class _AddHostelState extends State<AddHostel> {
                   // print('token in add:$token');
                   // print('id in add:$id');
                   try {
-                    await NodeHostelProvider().registerHostel(
+                    final response = await NodeHostelProvider().registerHostel(
                       name: 'OtestHostel',
                       address: 'Ostest Road',
-                      isFeatured: false,
+                      // isFeatured: false,
                       latitude: 27.75292,
                       longitude: 85.32524,
                       description: 'Yo Otest user ko hostel ho',
@@ -91,8 +96,25 @@ class _AddHostelState extends State<AddHostel> {
                       reviews: [],
                       ownerId: id,
                     );
+                    if (response == 'success') {
+                      setState(
+                        () {
+                          SuccessSnackBar.showSnackBar(
+                              context, 'Hostel added successfully');
+                        },
+                      );
+                    } else {
+                      setState(() {
+                        ErrorSnackBar.showSnackBar(
+                            context, 'Error adding hostel');
+                      });
+                    }
                   } on Exception catch (e) {
                     print('Add hostel error:$e');
+                    setState(() {
+                      ErrorSnackBar.showSnackBar(
+                          context, 'Error adding hostel');
+                    });
                   }
                 },
                 child: const Text('Add hostel'),

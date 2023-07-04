@@ -4,7 +4,7 @@ abstract class HostelProvider {
   Future<String> registerHostel({
     required String name,
     required String address,
-    required bool isFeatured,
+    // required bool isFeatured,
     required double latitude,
     required double longitude,
     required String description,
@@ -17,4 +17,6 @@ abstract class HostelProvider {
     required List<String> reviews,
     required String ownerId,
   });
+
+  Future<void> initialize();
 }
