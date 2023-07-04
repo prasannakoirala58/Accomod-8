@@ -13,10 +13,13 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
+  String? token;
   String username = '';
 
   @override
   void initState() {
+    token = widget.token;
+    print('Token in Explore:$token');
     // extracting username from token
     // can be later used to extract other values from token
     try {

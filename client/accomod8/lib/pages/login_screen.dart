@@ -1,7 +1,6 @@
 import 'package:accomod8/ownersideinterface/ownernavbar.dart';
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
-import 'package:accomod8/services/cookie/cookie_util.dart';
 import 'package:accomod8/usersideinterface/navbarroots.dart';
 import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:accomod8/utility/snackbar/success_snackbar.dart';
@@ -22,8 +21,6 @@ class LogInScreen extends StatefulWidget {
 class _LogInScreenState extends State<LogInScreen> {
   final _formField = GlobalKey<FormState>();
   //final _formField = GlobalKey<FormState>();
-
-  final cookieUtil = CookieUtil();
 
   late final TextEditingController _email;
   late final TextEditingController _password;
