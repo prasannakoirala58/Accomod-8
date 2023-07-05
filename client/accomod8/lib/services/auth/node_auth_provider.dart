@@ -7,6 +7,7 @@ import 'package:accomod8/services/auth/auth_provider.dart';
 // import 'package:accomod8/services/auth/auth_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../cookie/cookie_util.dart';
 import 'auth_exceptions.dart';
 
 class NodeAuthProvider implements AuthProvider {
@@ -111,7 +112,11 @@ class NodeAuthProvider implements AuthProvider {
       //   'data',
       //   token,
       // );
-      print(token.toString());
+
+      // CookieUtil.storeCookies(jsonResponse);
+      CookieUtil().retrieveDataFromCookie(url: loginUrl);
+
+      print('Success pachi ko token: ${token.toString()}');
       print('login');
       return token.toString();
     } else {
