@@ -65,7 +65,7 @@ class _AddRoomDetailsPageState extends State<AddRoomDetailsPage> {
           onChanged: (value) {
             setState(() {
               roomData['room_number'] = value;
-              roomData['id'] = value; // Set id to room number
+              roomData['id'] = value;
             });
           },
         ),
@@ -77,8 +77,7 @@ class _AddRoomDetailsPageState extends State<AddRoomDetailsPage> {
               roomData['available_seats'] = int.tryParse(value) ?? 0;
             });
           },
-          initialValue:
-              roomData['available_seats'].toString(), // Added initialValue
+          initialValue: roomData['available_seats'].toString(),
         ),
         TextFormField(
           decoration: const InputDecoration(labelText: 'Price'),
@@ -88,7 +87,7 @@ class _AddRoomDetailsPageState extends State<AddRoomDetailsPage> {
               roomData['price'] = double.tryParse(value) ?? 0.0;
             });
           },
-          initialValue: roomData['price'].toString(), // Added initialValue
+          initialValue: roomData['price'].toString(),
         ),
         DropdownButtonFormField<String>(
           value: roomData['room_type'],
@@ -246,9 +245,8 @@ class _AddRoomDetailsPageState extends State<AddRoomDetailsPage> {
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Container(
-              height: MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  320.0, // Adjust the height as needed
+              height:
+                  MediaQuery.of(context).size.height - kToolbarHeight - 320.0,
               child: ListView(
                 shrinkWrap: true,
                 children: [
