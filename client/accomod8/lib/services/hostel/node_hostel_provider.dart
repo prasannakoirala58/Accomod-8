@@ -103,4 +103,18 @@ class NodeHostelProvider implements HostelProvider {
     // TODO: implement initialize
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAllHostels() async {
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+
+    var response = await dio.get(getAllHostelUrl);
+    // print('Raw Response: $response');
+    var jsonResponse = response.data;
+    List<Map<String, dynamic>> hostels =
+        List<Map<String, dynamic>>.from(jsonResponse);
+    // print('Hostels:$hostels');
+    return hostels;
+  }
 }
