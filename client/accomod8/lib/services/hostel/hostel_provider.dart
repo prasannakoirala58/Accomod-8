@@ -18,5 +18,7 @@ abstract class HostelProvider {
     required String ownerId,
   });
 
+  Future<List<Map<String, dynamic>>> getAllHostels();
+
   Future<void> initialize();
 }
