@@ -6,7 +6,7 @@ import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 import '../../enums/gender_enums.dart';
 import '../../utility/string_formatter/user_data_formatter.dart';
-import '../managehostel.dart';
+import '../ownernavbar.dart';
 
 class AddHostelFormScreen extends StatefulWidget {
   final String token;
@@ -170,7 +170,9 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ManageHostel(),
+                            builder: (context) => OwnerNavBar(
+                              token: widget.token,
+                            ),
                           ),
                         );
                       },
