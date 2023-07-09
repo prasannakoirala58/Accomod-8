@@ -1,0 +1,1 @@
+enum UserTypeEnum { user, owner }
