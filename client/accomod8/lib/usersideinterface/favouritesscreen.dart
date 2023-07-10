@@ -18,7 +18,7 @@ class FavouriteScreen extends StatelessWidget {
                 children: [
                   Text("This is favourite page",
                       style:
-                          TextStyle(fontSize: 35, fontWeight: FontWeight.w500))
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500))
                 ],
               ),
             ),
