@@ -1,3 +1,4 @@
+import 'package:accomod8/adminsideinterface/admin_home.dart';
 import 'package:accomod8/ownersideinterface/ownernavbar.dart';
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
@@ -74,6 +75,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   padding: const EdgeInsets.all(12),
                   child: TextFormField(
                     controller: _email,
+                    keyboardType: TextInputType.emailAddress,
                     enableSuggestions: false,
                     autocorrect: false,
                     decoration: const InputDecoration(
@@ -189,6 +191,15 @@ class _LogInScreenState extends State<LogInScreen> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => NavBarRoots(
+                                          token: _loginToken,
+                                        ),
+                                      ),
+                                    );
+                                  } else if (userType == 'admin') {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AdminHome(
                                           token: _loginToken,
                                         ),
                                       ),
