@@ -33,7 +33,11 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hostel Details'),
+        backgroundColor: Color.fromARGB(255, 213, 127, 93),
+        title: const Text(
+          'Hostel Details',
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -65,14 +69,26 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
           ),
           const SizedBox(height: 16),
           ListTile(
-            title: Text('Name: ${widget.hostel['name']}'),
-            subtitle: Text('Address: ${widget.hostel['address']}'),
+            title: Text(
+              'Name: ${widget.hostel['name']}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+            ),
+            subtitle: Text(
+              'Address: ${widget.hostel['address']}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+            ),
           ),
           ListTile(
-            title: Text('Description: ${widget.hostel['description']}'),
+            title: Text(
+              'Description: ${widget.hostel['description']}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+            ),
           ),
           ListTile(
-            title: Text('For Gender: ${widget.hostel['for_gender']}'),
+            title: Text(
+              'For Gender: ${widget.hostel['for_gender']}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+            ),
           ),
           const Text(
             'Amenities:',
@@ -119,7 +135,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.3),
                       spreadRadius: 2,
-                      blurRadius: 5,
+                      blurRadius: 4,
                       offset: const Offset(0, 3),
                     ),
                   ],
