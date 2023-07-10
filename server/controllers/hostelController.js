@@ -52,10 +52,35 @@ exports.get_hostels = async (req, res, next) => {
     @desc Get a hostel
     @access Public
 */
+// exports.get_hostel = async (req, res, next) => {
+//   try {
+//     const hostel = await Hostel.findById(req.params.id);
+//     res.status(200).json(hostel);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
 exports.get_hostel = async (req, res, next) => {
   try {
-    const hostel = await Hostel.findById(req.params.id);
-    res.status(200).json(hostel);
+    const ownerId = req.params.id;
+
+    // Find the hostel where the owner ID matches
+    const hostel = await Hostel.findOne({ owner: ownerId });
+
+    // If the hostel is not found, return an error response
+    if (!hostel) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Hostel not found',
+      });
+    }
+
+    // Return the hostel details
+    res.status(200).json({
+      status: 'success',
+      data: hostel,
+    });
   } catch (err) {
     next(err);
   }
