@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       typeof_user: {
         type: String,
         default: 'user',
-        enum: ['user', 'owner'],
+        enum: ['user', 'owner','admin'],
         // required: true,
       },
       is_verified: {

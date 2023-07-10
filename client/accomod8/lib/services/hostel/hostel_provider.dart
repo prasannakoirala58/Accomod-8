@@ -20,5 +20,10 @@ abstract class HostelProvider {
 
   Future<List<Map<String, dynamic>>> getAllHostels();
 
+  Future<String> featureOrUnfeatureHostel({
+    required bool toFeature,
+    required String id,
+  });
+
   Future<void> initialize();
 }
