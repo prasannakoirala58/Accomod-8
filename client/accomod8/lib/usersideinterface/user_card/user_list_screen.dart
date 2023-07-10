@@ -43,11 +43,10 @@ class _UserListScreenState extends State<UserListScreen> {
 
   void filterHostels() {
     setState(() {
-      filteredHostels = hostels
-          .where((hostel) => hostel['address']
-              .toLowerCase()
-              .contains(searchQuery.toLowerCase()))
-          .toList();
+      filteredHostels = hostels.where((hostel) {
+        final address = hostel['address']?.toLowerCase() ?? '';
+        return address.contains(searchQuery.toLowerCase());
+      }).toList();
     });
   }
 
@@ -60,6 +59,7 @@ class _UserListScreenState extends State<UserListScreen> {
                 onChanged: (value) {
                   setState(() {
                     searchQuery = value;
+                    filterHostels();
                   });
                 },
                 style: TextStyle(color: Colors.white),
@@ -100,12 +100,13 @@ class _UserListScreenState extends State<UserListScreen> {
                   final List<Map<String, dynamic>> featured = hostels
                       .where((hostel) => hostel['featured'] == true)
                       .toList();
-                  final List<Map<String, dynamic>> remainingUsers = hostels
+                  final List<Map<String, dynamic>> remainingHostels = hostels
                       .where((hostel) => hostel['featured'] != true)
                       .toList();
 
-                  final filteredList =
-                      searchQuery.isNotEmpty ? filteredHostels : remainingUsers;
+                  final filteredList = searchQuery.isNotEmpty
+                      ? filteredHostels
+                      : remainingHostels;
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -160,6 +161,15 @@ class _UserListScreenState extends State<UserListScreen> {
                                             Color.fromARGB(255, 242, 162, 131),
                                       ),
                                     ),
+                                    Text(
+                                      '${hostel['address']}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            Color.fromARGB(255, 242, 162, 131),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -182,9 +192,13 @@ class _UserListScreenState extends State<UserListScreen> {
                             crossAxisCount: 2,
                             childAspectRatio: 2.5,
                           ),
-                          itemCount: filteredList.length,
+                          itemCount: searchQuery.isNotEmpty
+                              ? filteredList.length
+                              : remainingHostels.length,
                           itemBuilder: (context, index) {
-                            final hostel = filteredList[index];
+                            final hostel = searchQuery.isNotEmpty
+                                ? filteredList[index]
+                                : remainingHostels[index];
                             return GestureDetector(
                               onTap: () {
                                 print('Hostel:$hostel');
