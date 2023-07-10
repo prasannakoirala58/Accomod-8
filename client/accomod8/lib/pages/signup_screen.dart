@@ -6,11 +6,14 @@ import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/pages/login_screen.dart';
+
+import '../enums/gender_enums.dart';
+import '../enums/user_type_enums.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 
-enum GenderTypeEnum { male, female, others }
+// enum GenderTypeEnum { male, female, others }
 
-enum UserTypeEnum { user, owner }
+// enum UserTypeEnum { user, owner }
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

@@ -1,8 +1,10 @@
-import 'package:accomod8/ownersideinterface/addhostel.dart';
+// import 'package:accomod8/ownersideinterface/addhostel.dart';
 import 'package:accomod8/ownersideinterface/managehostel.dart';
 import 'package:accomod8/ownersideinterface/ownersetting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'hostel_form/add_hostel_form.dart';
 
 class OwnerNavBar extends StatefulWidget {
   final String token;
@@ -19,9 +21,12 @@ class _OwnerNavBarState extends State<OwnerNavBar> {
   int _selectedIndex = 0;
   List<Widget> get _screens => [
         //HomeScreen
-        AddHostel(
+        AddHostelFormScreen(
           token: widget.token,
         ),
+        // AddHostel(
+        //   token: widget.token,
+        // ),
         //kk
         const ManageHostel(),
         //kk

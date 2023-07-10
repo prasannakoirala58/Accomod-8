@@ -186,7 +186,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                     'Logged in successfully',
                                   );
                                   if (userType == 'user') {
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => NavBarRoots(
@@ -195,7 +195,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                       ),
                                     );
                                   } else {
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => OwnerNavBar(
