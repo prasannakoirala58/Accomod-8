@@ -75,6 +75,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   padding: const EdgeInsets.all(12),
                   child: TextFormField(
                     controller: _email,
+                    keyboardType: TextInputType.emailAddress,
                     enableSuggestions: false,
                     autocorrect: false,
                     decoration: const InputDecoration(
@@ -198,9 +199,9 @@ class _LogInScreenState extends State<LogInScreen> {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const AdminHome(
-                                            // token: _loginToken,
-                                            ),
+                                        builder: (context) => AdminHome(
+                                          token: _loginToken,
+                                        ),
                                       ),
                                     );
                                   } else {
