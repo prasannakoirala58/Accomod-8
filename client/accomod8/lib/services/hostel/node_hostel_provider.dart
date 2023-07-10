@@ -117,4 +117,24 @@ class NodeHostelProvider implements HostelProvider {
     // print('Hostels:$hostels');
     return hostels;
   }
+
+  @override
+  Future<String> featureOrUnfeatureHostel({
+    required bool toFeature,
+    required String id,
+  }) async {
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+    print('Id of hostel selected:$id');
+    final Response response;
+    final String selectedUrl;
+    if (toFeature == true) {
+      selectedUrl = '$featureHostelUrl/$id';
+    } else {
+      selectedUrl = '$unFeatureHostelUrl/$id';
+    }
+    response = await dio.post(selectedUrl);
+    print('Raw Response : $response');
+    return response.toString();
+  }
 }
