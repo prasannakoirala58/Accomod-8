@@ -137,4 +137,44 @@ class NodeHostelProvider implements HostelProvider {
     print('Raw Response : $response');
     return response.toString();
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getOwnerHostel(
+      {required String id}) async {
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+    final String ownerUrl = '$getOwnerHostelUrl/$id';
+    var response = await dio.get(ownerUrl);
+    var jsonResponse = response.data;
+
+    Map<String, dynamic> responseData = Map<String, dynamic>.from(jsonResponse);
+    dynamic data = responseData['data'];
+
+    if (data != null && data is Map<String, dynamic>) {
+      // Return the contents of the "data" field as a list
+      return [data];
+    }
+
+    return [];
+  }
+
+  @override
+  Future<String> verifyOrUnverifyHostel({
+    required bool toVerify,
+    required String id,
+  }) async {
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+    print('Id of hostel selected:$id');
+    final Response response;
+    final String selectedUrl;
+    if (toVerify == true) {
+      selectedUrl = '$verifyHostelUrl/$id';
+    } else {
+      selectedUrl = '$unVerifyHostelUrl/$id';
+    }
+    response = await dio.post(selectedUrl);
+    print('Raw Response : $response');
+    return response.toString();
+  }
 }

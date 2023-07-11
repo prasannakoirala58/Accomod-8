@@ -352,6 +352,30 @@ exports.update_review = async (req, res, next) => {
   }
 };
 
+// verify
+exports.verify_hostel = async (req, res, next) => {
+  try {
+    const hostel = await Hostel.findById(req.params.id);
+    hostel.verified = true;
+    await hostel.save();
+    res.status(200).json(hostel);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.unverify_hostel = async (req, res, next) => {
+  try {
+    const hostel = await Hostel.findById(req.params.id);
+    hostel.verified = false;
+    await hostel.save();
+    res.status(200).json(hostel);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 /*
     @route GET /api/hostels/featured
     @desc Get all hostels that might be featured or top rated
