@@ -375,7 +375,6 @@ exports.unverify_hostel = async (req, res, next) => {
   }
 };
 
-
 /*
     @route GET /api/hostels/featured
     @desc Get all hostels that might be featured or top rated
