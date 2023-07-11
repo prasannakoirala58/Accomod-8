@@ -15,6 +15,8 @@ const {
   get_all_hostels,
   get_unverified_hostels,
   delete_hostel,
+  verify_hostel,
+  unverify_hostel,
 } = require('../controllers/hostelController');
 
 const router = express.Router();
@@ -26,6 +28,8 @@ router.route('/featured').get(get_featured_hostels);
 router.route('/unfeatured').post(unfeature_all_hostels);
 router.route('/unfeatured/:id').post(unfeature_hostel);
 router.route('/featured/:id').post(feature_hostel);
+router.route('/verified/:id').post(verify_hostel);
+router.route('/unverified/:id').post(unverify_hostel);
 router.route('/unverified').get(get_unverified_hostels);
 router.route('/all').get(get_all_hostels);
 router.route('/:id').get(get_hostel);

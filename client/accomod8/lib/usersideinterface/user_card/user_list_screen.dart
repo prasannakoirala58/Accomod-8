@@ -1,7 +1,8 @@
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
-import 'package:accomod8/usersideinterface/user_card/user_detail_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+
+import '../../pages/hostel_details_screen.dart';
 
 class UserListScreen extends StatefulWidget {
   final String token;
@@ -122,8 +123,9 @@ class _UserListScreenState extends State<UserListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(
+                                    builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
+                                      showVerifyButton: false,
                                     ),
                                   ),
                                 );
@@ -206,8 +208,9 @@ class _UserListScreenState extends State<UserListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(
+                                    builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
+                                      showVerifyButton: false,
                                     ),
                                   ),
                                 );
