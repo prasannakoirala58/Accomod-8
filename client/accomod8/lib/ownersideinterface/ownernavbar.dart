@@ -28,7 +28,9 @@ class _OwnerNavBarState extends State<OwnerNavBar> {
         //   token: widget.token,
         // ),
         //kk
-        const ManageHostel(),
+        ManageHostel(
+          token: widget.token,
+        ),
         //kk
         OwnerSetting(
           token: widget.token,

@@ -3,6 +3,7 @@ import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
 
+import '../pages/hostel_details_screen.dart';
 import '../pages/login_screen.dart';
 import '../services/auth/node_auth_provider.dart';
 import '../utility/dialog/logout_dialog.dart';
@@ -107,8 +108,7 @@ class _AdminHomeState extends State<AdminHome> {
                 final hostel = hostels[index];
                 final bool isFeatured = hostel['featured'] ?? false;
                 final bool isVerified = hostel['verified'] ?? false;
-                final Color containerColor =
-                    const Color.fromARGB(255, 242, 162, 131);
+                const Color containerColor = Color.fromARGB(255, 242, 162, 131);
                 final Color starColor =
                     isFeatured ? Colors.yellow : Colors.grey;
                 final Color verifiedIconColor =
@@ -117,12 +117,16 @@ class _AdminHomeState extends State<AdminHome> {
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => UserDetailScreen(hostel: hostel),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HostelDetailsScreen(
+                            hostel: hostel,
+                            showBookNowButton: false,
+                            showDocument: true,
+                          ),
+                        ),
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -143,10 +147,10 @@ class _AdminHomeState extends State<AdminHome> {
                                 IconButton(
                                   onPressed: () async {
                                     print('star press');
-                                    final shouldLogout =
+                                    final shouldChange =
                                         await showFeatureHostelDialog(
                                             context, isFeatured);
-                                    if (shouldLogout!) {
+                                    if (shouldChange!) {
                                       try {
                                         await featureOrUnfeatureHostel(
                                             !isFeatured, hostel['id']);

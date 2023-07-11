@@ -76,7 +76,6 @@ class _LogInScreenState extends State<LogInScreen> {
                   child: TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     controller: _email,
-                    keyboardType: TextInputType.emailAddress,
                     enableSuggestions: false,
                     autocorrect: false,
                     decoration: const InputDecoration(
