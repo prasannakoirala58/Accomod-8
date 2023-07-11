@@ -26,4 +26,11 @@ abstract class HostelProvider {
   });
 
   Future<void> initialize();
+
+  Future<List<Map<String, dynamic>>> getOwnerHostel({required String id});
+
+  Future<String> verifyOrUnverifyHostel({
+    required bool toVerify,
+    required String id,
+  });
 }

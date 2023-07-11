@@ -31,7 +31,7 @@ class _NavBarRootsState extends State<NavBarRoots> {
         ),
 
         //Add later on
-        Container(),
+        // Container(),
 
         //Favourite
         FavouriteScreen(),
@@ -78,10 +78,10 @@ class _NavBarRootsState extends State<NavBarRoots> {
               ),
               label: "Users",
             ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.heart_circle_fill, size: 25),
-              label: "Favourites",
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(CupertinoIcons.heart_circle_fill, size: 25),
+            //   label: "Favourites",
+            // ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.heart_circle_fill, size: 25),
               label: "Favourites",

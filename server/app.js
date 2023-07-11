@@ -35,12 +35,14 @@ const userRouter = require('./routers/userRouter');
 const hostelRouter = require('./routers/hostelRouter');
 const reviewRouter = require('./routers/reviewRouter');
 const analyticsRouter = require('./routers/analyticsRouter');
+const bookingRouter = require('./routers/bookingRouter');
 const testRouter = require('./routers/testRouter');
 
 app.use('/api/reviews', reviewRouter);
 app.use('/api/users', userRouter);
 app.use('/api/hostels', hostelRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/booking', bookingRouter);
 app.use('/api/test', testRouter);
 
 // For dev purposes

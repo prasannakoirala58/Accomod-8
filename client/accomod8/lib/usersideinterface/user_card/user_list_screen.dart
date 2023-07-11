@@ -1,7 +1,8 @@
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
-import 'package:accomod8/usersideinterface/user_card/user_detail_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+
+import '../../pages/hostel_details_screen.dart';
 
 class UserListScreen extends StatefulWidget {
   final String token;
@@ -54,6 +55,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 242, 162, 131),
         title: isSearching
             ? TextField(
                 onChanged: (value) {
@@ -121,8 +123,9 @@ class _UserListScreenState extends State<UserListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(
+                                    builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
+                                      showVerifyButton: false,
                                     ),
                                   ),
                                 );
@@ -190,7 +193,7 @@ class _UserListScreenState extends State<UserListScreen> {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 2.5,
+                            // childAspectRatio: 2,
                           ),
                           itemCount: searchQuery.isNotEmpty
                               ? filteredList.length
@@ -205,14 +208,15 @@ class _UserListScreenState extends State<UserListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(
+                                    builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
+                                      showVerifyButton: false,
                                     ),
                                   ),
                                 );
                               },
                               child: Container(
-                                margin: EdgeInsets.all(8),
+                                margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
@@ -229,7 +233,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CircleAvatar(
-                                      radius: 40,
+                                      radius: 30,
                                       child: hostel['images'] != null &&
                                               hostel['images'].isNotEmpty
                                           ? Image.network(hostel['images'][0])

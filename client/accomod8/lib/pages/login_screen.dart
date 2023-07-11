@@ -74,8 +74,8 @@ class _LogInScreenState extends State<LogInScreen> {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: TextFormField(
-                    controller: _email,
                     keyboardType: TextInputType.emailAddress,
+                    controller: _email,
                     enableSuggestions: false,
                     autocorrect: false,
                     decoration: const InputDecoration(
