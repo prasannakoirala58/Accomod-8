@@ -66,7 +66,7 @@ exports.get_hostel = async (req, res, next) => {
     const ownerId = req.params.id;
 
     // Find the hostel where the owner ID matches
-    const hostel = await Hostel.findOne({ owner: ownerId });
+    const hostel = await Hostel.find({ owner: ownerId });
 
     // If the hostel is not found, return an error response
     if (!hostel) {
