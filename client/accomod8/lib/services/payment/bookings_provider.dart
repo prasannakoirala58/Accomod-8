@@ -1,6 +1,7 @@
 abstract class BookingsProvider {
-  Future<void> createBooking({
+  Future<String> createBooking({
     required String userId,
     required String hostelId,
+    required int price,
   });
 }

@@ -25,6 +25,20 @@ class ImageUploader {
     }
   }
 
+  Future<File?> selectImageFromSource(ImageSource source) async {
+    final image = await _picker.pickImage(source: source);
+    if (image == null) {
+      return null;
+    } else {
+      return File(image.path);
+    }
+  }
+
+  // Future<List<int>> loadDefaultImageBytes(String imagePath) async {
+  //   final File file = File(imagePath);
+  //   return await file.readAsBytes();
+  // }
+
   // Future<File?> selectImage() async{
   //   final image = await
   // }
