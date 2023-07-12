@@ -1,4 +1,5 @@
-// import 'dart:io';
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 import 'package:accomod8/config.dart';
 import 'package:accomod8/services/hostel/hostel_provider.dart';
@@ -16,8 +17,8 @@ class NodeHostelProvider implements HostelProvider {
     required double longitude,
     required String description,
     required String forGender,
-    // required List<File> images, // not required
-    // required File document, // not required
+    List<File?>? images, // make images nullable
+    File? document, // make document nullable
     required bool isVerified,
     required List<String> amenities,
     required List<Map<String, dynamic>> rooms,
@@ -27,20 +28,27 @@ class NodeHostelProvider implements HostelProvider {
     DioInstance dioInstance = DioInstance();
     Dio dio = dioInstance.dio;
 
-    // CookieManager cookieManager = CookieManager.instance;
-    // await cookieManager.initCookie();
-    // Dio dio = Dio();
-    // dio.interceptors.add(cookieManager);
+    String documentFileName = document?.path.split('/').last ?? '';
+    print('Doc File Name:$documentFileName');
 
-    // String documentFileName = document.path.split('/').last;
+    print('Raw images: $images');
 
-    // List<MultipartFile> imageFile = [];
-    // for (var i = 0; i < images.length; i++) {
-    //   String imageFileName = images[i].path.split('/').last;
-    //   imageFile.add(
-    //     await MultipartFile.fromFile(images[i].path, filename: imageFileName),
-    //   );
-    // }
+    List<MultipartFile> imageFiles = [];
+    if (images != null) {
+      for (var i = 0; i < images.length; i++) {
+        if (images[i] != null) {
+          String imageFileName = images[i]!.path.split('/').last;
+          print('Image File Name: $imageFileName');
+          imageFiles.add(
+            await MultipartFile.fromFile(
+              images[i]!.path,
+              filename: imageFileName,
+              contentType: MediaType('image', 'png'),
+            ),
+          );
+        }
+      }
+    }
 
     List<Map<String, dynamic>> roomData = rooms.map((room) {
       return {
@@ -66,13 +74,18 @@ class NodeHostelProvider implements HostelProvider {
         'for_gender': forGender,
         'amenities': amenities,
         'rooms': roomData,
-        // 'images': images,
-        // 'document': await MultipartFile.fromFile(
-        //   document.path,
-        //   filename: documentFileName,
-        // ),
+        'images': imageFiles.isNotEmpty ? imageFiles : null,
+        'document': document != null
+            ? await MultipartFile.fromFile(
+                document.path,
+                filename: documentFileName,
+                contentType: MediaType('image', 'png'),
+              )
+            : null,
       },
     );
+
+    print('FormData being sent:${formData.fields}');
 
     try {
       Response formDataResponse = await dio.post(
@@ -143,19 +156,26 @@ class NodeHostelProvider implements HostelProvider {
       {required String id}) async {
     DioInstance dioInstance = DioInstance();
     Dio dio = dioInstance.dio;
+
+    // changing the type to List<Map<String, dynamic>>
+    List<Map<String, dynamic>> data = [];
+
     final String ownerUrl = '$getOwnerHostelUrl/$id';
-    var response = await dio.get(ownerUrl);
-    var jsonResponse = response.data;
 
-    Map<String, dynamic> responseData = Map<String, dynamic>.from(jsonResponse);
-    dynamic data = responseData['data'];
+    try {
+      var response = await dio.get(ownerUrl);
+      var jsonResponse = response.data;
+      Map<String, dynamic> responseData =
+          Map<String, dynamic>.from(jsonResponse);
 
-    if (data != null && data is Map<String, dynamic>) {
-      // Return the contents of the "data" field as a list
-      return [data];
+      // mapping each element to Map<String, dynamic>
+      data = List<Map<String, dynamic>>.from(responseData['data']);
+
+      return data;
+    } catch (e) {
+      print('Error: $e');
+      return data;
     }
-
-    return [];
   }
 
   @override
