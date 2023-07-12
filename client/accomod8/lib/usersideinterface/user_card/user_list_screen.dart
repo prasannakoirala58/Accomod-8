@@ -1,7 +1,8 @@
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
-import 'package:accomod8/usersideinterface/user_card/user_detail_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+
+import '../../pages/hostel_details_screen.dart';
 
 class UserListScreen extends StatefulWidget {
   final String token;
@@ -54,6 +55,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 242, 162, 131),
         title: isSearching
             ? TextField(
                 onChanged: (value) {
@@ -111,7 +113,7 @@ class _UserListScreenState extends State<UserListScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: CarouselSlider(
@@ -121,14 +123,15 @@ class _UserListScreenState extends State<UserListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(
+                                    builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
+                                      showVerifyButton: false,
                                     ),
                                   ),
                                 );
                               },
                               child: Container(
-                                margin: EdgeInsets.all(8),
+                                margin: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
@@ -183,14 +186,17 @@ class _UserListScreenState extends State<UserListScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      //yaha bata chai grid view builder suru va cha
                       Expanded(
                         child: GridView.builder(
                           shrinkWrap: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 2.5,
+                            childAspectRatio: 4 / 5,
                           ),
                           itemCount: searchQuery.isNotEmpty
                               ? filteredList.length
@@ -205,14 +211,15 @@ class _UserListScreenState extends State<UserListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(
+                                    builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
+                                      showVerifyButton: false,
                                     ),
                                   ),
                                 );
                               },
                               child: Container(
-                                margin: EdgeInsets.all(8),
+                                margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
@@ -226,34 +233,82 @@ class _UserListScreenState extends State<UserListScreen> {
                                   ],
                                 ),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    CircleAvatar(
-                                      radius: 40,
-                                      child: hostel['images'] != null &&
-                                              hostel['images'].isNotEmpty
-                                          ? Image.network(hostel['images'][0])
-                                          : Image.asset('images/acclog.png'),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      '${hostel['name']}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 242, 162, 131),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.5,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: hostel['images'] != null &&
+                                                  hostel['images'].isNotEmpty
+                                              ? Image.network(
+                                                      hostel['images'][0])
+                                                  .image // Use Image.network constructor
+                                              : Image.asset('images/acclog.png')
+                                                  .image, // Replace with your fallback image path
+                                          fit: BoxFit.cover,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    Text(
-                                      '${hostel['address']}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 242, 162, 131),
+                                    SizedBox(
+                                      height: 2,
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            '${hostel['name']}',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color.fromARGB(
+                                                  255, 242, 162, 131),
+                                            ),
+                                          ),
+                                          Text(
+                                            '${hostel['address']}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color.fromARGB(
+                                                  255, 242, 162, 131),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
+                                    // CircleAvatar(
+                                    //   radius: 30,
+                                    //   child: hostel['images'] != null &&
+                                    //           hostel['images'].isNotEmpty
+                                    //       ? Image.network(hostel['images'][0])
+                                    //       : Image.asset('images/acclog.png'),
+                                    // ),
+                                    // SizedBox(height: 8),
+                                    // Text(
+                                    //   '${hostel['name']}',
+                                    //   style: const TextStyle(
+                                    //     fontSize: 16,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color:
+                                    //         Color.fromARGB(255, 242, 162, 131),
+                                    //   ),
+                                    // ),
+                                    // Text(
+                                    //   '${hostel['address']}',
+                                    //   style: const TextStyle(
+                                    //     fontSize: 16,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color:
+                                    //         Color.fromARGB(255, 242, 162, 131),
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ),
