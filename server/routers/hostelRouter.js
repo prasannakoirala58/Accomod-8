@@ -34,7 +34,7 @@ router.route('/unverified').get(get_unverified_hostels);
 router.route('/all').get(get_all_hostels);
 router.route('/:id').get(get_hostel);
 router.route('/register').post(uploadHostelPhoto, register_hostel);
-router.route('/update/:id').put(update_hostel);
+router.route('/update/:id').patch(update_hostel);
 router.route('/review/:id').post(post_review);
 router.route('/review/update/:id').put(update_review);
 router.route('/delete/:id').delete(delete_hostel);

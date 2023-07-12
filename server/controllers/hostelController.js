@@ -203,14 +203,13 @@ exports.register_hostel = async (req, res, next) => {
 };
 
 /*
-    @route PUT /api/hostels/:id
+    @route PATCH /api/hostels/:id
     @desc Update a hostel
     @access Owner
 */
 exports.update_hostel = async (req, res, next) => {
   try {
     const body = req.body;
-
     const token = getToken(req);
     const decodedToken = jwt.verify(token, process.env.SECRET);
 
@@ -222,19 +221,68 @@ exports.update_hostel = async (req, res, next) => {
     const hostel = await Hostel.findById(req.params.id);
 
     if (hostel.owner.toString() === user.id.toString()) {
-      /* need to learn about the runValidators and useFindAndModify options */
-      /* front end will send object as a whole to update */
-      const updatedHostel = await Hostel.findByIdAndUpdate(req.params.id, body, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-      });
+      // Update only the specified fields from the request body
+      const { amenities, available_rooms, rooms, description, for_gender } = body;
+
+      // Check if the fields are present in the request body, and update them if so
+      if (amenities) {
+        hostel.amenities = amenities;
+      }
+
+      if (available_rooms) {
+        hostel.available_rooms = available_rooms;
+      }
+
+      if (rooms) {
+        hostel.rooms = rooms;
+      }
+
+      if (description) {
+        hostel.description = description;
+      }
+
+      if (for_gender) {
+        hostel.for_gender = for_gender;
+      }
+
+      // Save the updated hostel
+      const updatedHostel = await hostel.save();
+
       res.status(200).json(updatedHostel);
     }
   } catch (err) {
     next(err);
   }
 };
+
+// exports.update_hostel = async (req, res, next) => {
+//   try {
+//     const body = req.body;
+
+//     const token = getToken(req);
+//     const decodedToken = jwt.verify(token, process.env.SECRET);
+
+//     if (!token || !decodedToken.id) {
+//       return res.status(401).json({ error: 'token missing or invalid' });
+//     }
+
+//     const user = await User.findById(decodedToken.id);
+//     const hostel = await Hostel.findById(req.params.id);
+
+//     if (hostel.owner.toString() === user.id.toString()) {
+//       /* need to learn about the runValidators and useFindAndModify options */
+//       /* front end will send object as a whole to update */
+//       const updatedHostel = await Hostel.findByIdAndUpdate(req.params.id, body, {
+//         new: true,
+//         runValidators: true,
+//         useFindAndModify: false,
+//       });
+//       res.status(200).json(updatedHostel);
+//     }
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 /*
     @route PUT /api/hostels/:id
