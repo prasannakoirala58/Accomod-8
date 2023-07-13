@@ -1,4 +1,5 @@
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
+import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -12,6 +13,7 @@ class HostelDetailsScreen extends StatefulWidget {
   final bool showVerifyButton;
   final bool showDocument;
   final String id;
+  final bool showUpdateButton;
 
   const HostelDetailsScreen({
     Key? key,
@@ -20,6 +22,7 @@ class HostelDetailsScreen extends StatefulWidget {
     this.showVerifyButton = true,
     this.showDocument = false,
     this.id = '',
+    this.showUpdateButton = false,
   }) : super(key: key);
 
   @override
@@ -27,13 +30,116 @@ class HostelDetailsScreen extends StatefulWidget {
 }
 
 class _HostelDetailsScreenState extends State<HostelDetailsScreen> {
+  // for changing description
+  bool isEditingDescription = false;
+  bool isEditingForGender = false;
+  late TextEditingController _descriptionController;
+
+  // for changing for_gender
+  String? selectedGender;
+
   bool paymentSuccessful = false;
   bool isHostelVerified = false;
 
   @override
   void initState() {
+    paymentSuccessful = false;
+    isHostelVerified = false;
     super.initState();
     isHostelVerified = widget.hostel['verified'];
+    _descriptionController =
+        TextEditingController(text: widget.hostel['description']);
+    selectedGender = widget.hostel['for_gender'];
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _toggleDescriptionEditing() {
+    setState(() {
+      isEditingDescription = !isEditingDescription;
+    });
+  }
+
+  void _toggleForGenderEditing() {
+    setState(() {
+      isEditingForGender = !isEditingForGender;
+    });
+  }
+
+  void _cancelEditingDecription() {
+    setState(() {
+      isEditingDescription = false;
+    });
+  }
+
+  void _cancelEditingForGender() {
+    setState(() {
+      isEditingForGender = false;
+    });
+  }
+
+  void _submitDescription() async {
+    String newDescription = _descriptionController.text;
+    try {
+      await NodeHostelProvider().updateHostelDetails(
+        hostelId: widget.hostel['id'],
+        newDescription: newDescription,
+        newForGender: selectedGender ?? '',
+      );
+      // _toggleDescriptionEditing();
+      setState(
+        () {
+          widget.hostel['description'] = newDescription;
+          // widget.hostel['for_gender'] = selectedGender;
+          SuccessSnackBar.showSnackBar(
+            context,
+            'Hostel updated successfully',
+          );
+        },
+      );
+    } on Exception catch (e) {
+      setState(() {
+        print('Error in frontend:$e');
+        ErrorSnackBar.showSnackBar(
+          context,
+          'Failed to update hostel',
+        );
+      });
+    }
+  }
+
+  void _submitGender() async {
+    // String newDescription = _descriptionController.text;
+    try {
+      await NodeHostelProvider().updateHostelDetails(
+        hostelId: widget.hostel['id'],
+        newDescription: '',
+        newForGender: selectedGender ?? '',
+      );
+      // _toggleForGenderEditing();
+      setState(
+        () {
+          // widget.hostel['description'] = newDescription;
+          widget.hostel['for_gender'] = selectedGender;
+          SuccessSnackBar.showSnackBar(
+            context,
+            'Hostel updated successfully',
+          );
+        },
+      );
+    } on Exception catch (e) {
+      setState(() {
+        print('Error in frontend:$e');
+        ErrorSnackBar.showSnackBar(
+          context,
+          'Failed to update hostel',
+        );
+      });
+    }
   }
 
   @override
@@ -102,12 +208,101 @@ class _HostelDetailsScreenState extends State<HostelDetailsScreen> {
               'Description: ${widget.hostel['description']}',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
             ),
+            trailing: widget.showUpdateButton
+                ? isEditingDescription
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FloatingActionButton(
+                            mini: true,
+                            onPressed: _submitDescription,
+                            child: const Icon(Icons.check),
+                          ),
+                          const SizedBox(width: 8.0),
+                          FloatingActionButton(
+                            mini: true,
+                            backgroundColor: Colors.red[300],
+                            onPressed: _cancelEditingDecription,
+                            child: const Icon(Icons.cancel),
+                          ),
+                        ],
+                      )
+                    : FloatingActionButton(
+                        mini: true,
+                        backgroundColor:
+                            const Color.fromARGB(255, 242, 162, 150),
+                        onPressed: _toggleDescriptionEditing,
+                        child: const Icon(Icons.update),
+                      )
+                : null,
+            subtitle: isEditingDescription
+                ? TextFormField(
+                    controller: _descriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter new description',
+                    ),
+                  )
+                : null,
           ),
           ListTile(
-            title: Text(
-              'For Gender: ${widget.hostel['for_gender']}',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'For Gender: ${widget.hostel['for_gender']}',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+                ),
+                if (widget.showUpdateButton && isEditingForGender)
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: DropdownButton<String>(
+                        value: selectedGender,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedGender = newValue;
+                          });
+                        },
+                        items: <String>['male', 'female', 'others']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+              ],
             ),
+            trailing: widget.showUpdateButton
+                ? isEditingForGender
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FloatingActionButton(
+                            mini: true,
+                            // backgroundColor: Colors.green[300],
+                            onPressed: _submitGender,
+                            child: const Icon(Icons.check),
+                          ),
+                          const SizedBox(width: 8.0),
+                          FloatingActionButton(
+                            mini: true,
+                            backgroundColor: Colors.red[300],
+                            onPressed: _cancelEditingForGender,
+                            child: const Icon(Icons.cancel),
+                          ),
+                        ],
+                      )
+                    : FloatingActionButton(
+                        mini: true,
+                        backgroundColor:
+                            const Color.fromARGB(255, 242, 162, 150),
+                        onPressed: _toggleForGenderEditing,
+                        child: const Icon(Icons.update),
+                      )
+                : null,
           ),
           const Text(
             'Amenities:',
