@@ -249,28 +249,36 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
         },
         child: Form(
           child: Scaffold(
-            body: ValueListenableBuilder<GenderTypeEnum?>(
-              valueListenable: _genderNotifier,
-              builder: (context, selectedGender, _) {
-                return Stepper(
-                  type: StepperType.vertical,
-                  currentStep: _activeStepIndex,
-                  steps: stepList(),
-                  onStepContinue: () {
-                    if (_activeStepIndex < (stepList().length - 1)) {
-                      _activeStepIndex += 1;
-                    }
-                    setState(() {});
-                  },
-                  onStepCancel: () {
-                    if (_activeStepIndex == 0) {
-                      return;
-                    }
-                    _activeStepIndex -= 1;
-                    setState(() {});
-                  },
-                );
-              },
+            body: Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Color.fromARGB(255, 242, 162, 131),
+                ),
+              ),
+              child: ValueListenableBuilder<GenderTypeEnum?>(
+                valueListenable: _genderNotifier,
+                builder: (context, selectedGender, _) {
+                  return Stepper(
+                    type: StepperType.vertical,
+                    currentStep: _activeStepIndex,
+                    steps: stepList(),
+                    onStepContinue: () {
+                      // Color.fromARGB(255, 242, 162, 131);
+                      if (_activeStepIndex < (stepList().length - 1)) {
+                        _activeStepIndex += 1;
+                      }
+                      setState(() {});
+                    },
+                    onStepCancel: () {
+                      if (_activeStepIndex == 0) {
+                        return;
+                      }
+                      _activeStepIndex -= 1;
+                      setState(() {});
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ),

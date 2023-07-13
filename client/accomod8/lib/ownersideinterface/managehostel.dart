@@ -46,7 +46,9 @@ class _ManageHostelState extends State<ManageHostel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Hostel'),
+        title: const Text(
+          'Manage Hostel',
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
