@@ -54,6 +54,9 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> extractedData =
+        UserDataFormatter.extractValues(widget.token);
+    final profilePicture = extractedData['profile_picture'];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 242, 162, 131),
@@ -71,7 +74,18 @@ class _UserListScreenState extends State<UserListScreen> {
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
                 ),
               )
-            : Text('Hostel List'),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Hostel List'),
+                  CircleAvatar(
+                    radius: 20,
+                    child: profilePicture != null && profilePicture.isNotEmpty
+                        ? Image.network(profilePicture)
+                        : Image.asset('images/acclog.png'),
+                  ),
+                ],
+              ),
         actions: [
           IconButton(
             icon: isSearching ? Icon(Icons.close) : Icon(Icons.search),
