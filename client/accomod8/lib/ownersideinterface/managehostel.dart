@@ -99,6 +99,7 @@ class _ManageHostelState extends State<ManageHostel> {
                                   showBookNowButton: false,
                                   showVerifyButton: false,
                                   showDocument: true,
+                                  showUpdateButton: true,
                                 ),
                               ),
                             );
