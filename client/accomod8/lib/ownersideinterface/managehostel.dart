@@ -46,6 +46,7 @@ class _ManageHostelState extends State<ManageHostel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 242, 162, 131),
         title: const Text(
           'Manage Hostel',
         ),
