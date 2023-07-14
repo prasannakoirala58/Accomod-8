@@ -78,6 +78,7 @@ class _UserListScreenState extends State<UserListScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Hostel List'),
+                  //profile picture display
                   CircleAvatar(
                     radius: 20,
                     child: profilePicture != null && profilePicture.isNotEmpty

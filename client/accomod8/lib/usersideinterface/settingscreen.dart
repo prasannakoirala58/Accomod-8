@@ -42,10 +42,10 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "setting page",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-                  ),
+                  // const Text(
+                  //   "setting page",
+                  //   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                  // ),
                   TextButton(
                     onPressed: () async {
                       Map<String, dynamic> extractedData =
