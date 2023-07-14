@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:accomod8/ownersideinterface/hostel_form/add_hostel_photos.dart';
 import 'package:accomod8/ownersideinterface/hostel_form/basic_hostel_details_page.dart';
 import 'package:accomod8/ownersideinterface/hostel_form/room_details_page.dart';
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
@@ -41,6 +44,21 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
       print('Exception: $e');
     }
     super.initState();
+  }
+
+  File? document;
+  List<File?> hostelPhotos = List.generate(5, (_) => null);
+
+  void handleDocumentPhotoSelected(File? photo) {
+    setState(() {
+      document = photo;
+    });
+  }
+
+  void handleHostelPhotosSelected(List<File?> photos) {
+    setState(() {
+      hostelPhotos = photos;
+    });
   }
 
   final TextEditingController nameController = TextEditingController();
@@ -100,6 +118,20 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
         ),
         Step(
           state: _activeStepIndex <= 2 ? StepState.editing : StepState.complete,
+          isActive: _activeStepIndex >= 0,
+          title: const Text(
+            'Photos',
+            style: TextStyle(
+              color: Color.fromARGB(255, 242, 162, 131),
+            ),
+          ),
+          content: AddBasicHostelPhotosPage(
+            onDocumentPhotoSelected: handleDocumentPhotoSelected,
+            onHostelPhotosSelected: handleHostelPhotosSelected,
+          ),
+        ),
+        Step(
+          state: _activeStepIndex <= 3 ? StepState.editing : StepState.complete,
           isActive: _activeStepIndex >= 2,
           title: const Text(
             'Submit',
@@ -147,6 +179,7 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
                   }).toList();
 
                   print('rooms:$rooms');
+                  print('hostel photos:$hostelPhotos');
 
                   try {
                     var response = await NodeHostelProvider().registerHostel(
@@ -161,22 +194,35 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
                       rooms: rooms,
                       reviews: [''],
                       ownerId: id,
+                      images: hostelPhotos,
+                      document: document,
                     );
                     print('Frontend Response: $response');
-                    setState(
-                      () {
-                        SuccessSnackBar.showSnackBar(
-                            context, 'Hostel Registered Successfully');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OwnerNavBar(
-                              token: widget.token,
+                    if (response == 'success') {
+                      setState(
+                        () {
+                          SuccessSnackBar.showSnackBar(
+                            context,
+                            'Hostel Registered Successfully',
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OwnerNavBar(
+                                token: widget.token,
+                              ),
                             ),
-                          ),
+                          );
+                        },
+                      );
+                    } else {
+                      setState(() {
+                        ErrorSnackBar.showSnackBar(
+                          context,
+                          'Error registering hostel',
                         );
-                      },
-                    );
+                      });
+                    }
                   } on Exception catch (e) {
                     print('Error:$e');
                     setState(
@@ -203,28 +249,36 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
         },
         child: Form(
           child: Scaffold(
-            body: ValueListenableBuilder<GenderTypeEnum?>(
-              valueListenable: _genderNotifier,
-              builder: (context, selectedGender, _) {
-                return Stepper(
-                  type: StepperType.horizontal,
-                  currentStep: _activeStepIndex,
-                  steps: stepList(),
-                  onStepContinue: () {
-                    if (_activeStepIndex < (stepList().length - 1)) {
-                      _activeStepIndex += 1;
-                    }
-                    setState(() {});
-                  },
-                  onStepCancel: () {
-                    if (_activeStepIndex == 0) {
-                      return;
-                    }
-                    _activeStepIndex -= 1;
-                    setState(() {});
-                  },
-                );
-              },
+            body: Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Color.fromARGB(255, 242, 162, 131),
+                ),
+              ),
+              child: ValueListenableBuilder<GenderTypeEnum?>(
+                valueListenable: _genderNotifier,
+                builder: (context, selectedGender, _) {
+                  return Stepper(
+                    type: StepperType.vertical,
+                    currentStep: _activeStepIndex,
+                    steps: stepList(),
+                    onStepContinue: () {
+                      // Color.fromARGB(255, 242, 162, 131);
+                      if (_activeStepIndex < (stepList().length - 1)) {
+                        _activeStepIndex += 1;
+                      }
+                      setState(() {});
+                    },
+                    onStepCancel: () {
+                      if (_activeStepIndex == 0) {
+                        return;
+                      }
+                      _activeStepIndex -= 1;
+                      setState(() {});
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ),

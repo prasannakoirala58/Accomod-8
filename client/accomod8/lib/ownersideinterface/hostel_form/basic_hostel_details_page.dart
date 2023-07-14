@@ -38,6 +38,11 @@ class _AddBasicHostelDetailsPageState extends State<AddBasicHostelDetailsPage> {
           controller: widget.nameController,
           decoration: const InputDecoration(
             labelText: 'Name',
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Color.fromARGB(255, 242, 162, 131),
+              ),
+            ),
             prefixIcon: Icon(Icons.home_work_outlined),
           ),
         ),
@@ -46,6 +51,11 @@ class _AddBasicHostelDetailsPageState extends State<AddBasicHostelDetailsPage> {
           controller: widget.addressController,
           decoration: const InputDecoration(
             labelText: 'Address',
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Color.fromARGB(255, 242, 162, 131),
+              ),
+            ),
             prefixIcon: Icon(Icons.location_history_outlined),
           ),
         ),
@@ -54,6 +64,11 @@ class _AddBasicHostelDetailsPageState extends State<AddBasicHostelDetailsPage> {
           controller: widget.descriptionController,
           decoration: const InputDecoration(
             labelText: 'Description',
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Color.fromARGB(255, 242, 162, 131),
+              ),
+            ),
             prefixIcon: Icon(Icons.description_outlined),
           ),
           maxLines: 3,
@@ -141,6 +156,11 @@ class _AddBasicHostelDetailsPageState extends State<AddBasicHostelDetailsPage> {
           controller: widget.amenitiesController,
           decoration: const InputDecoration(
             labelText: 'Amenities(One per line)',
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Color.fromARGB(255, 242, 162, 131),
+              ),
+            ),
             prefixIcon: Icon(Icons.list),
           ),
           maxLines: null,

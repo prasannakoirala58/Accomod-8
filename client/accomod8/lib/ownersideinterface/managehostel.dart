@@ -2,6 +2,7 @@ import 'package:accomod8/pages/hostel_details_screen.dart';
 import 'package:accomod8/services/hostel/node_hostel_provider.dart';
 import 'package:flutter/material.dart';
 
+import '../services/hostel/hostel_exception.dart';
 import '../utility/string_formatter/user_data_formatter.dart';
 
 class ManageHostel extends StatefulWidget {
@@ -31,16 +32,23 @@ class _ManageHostelState extends State<ManageHostel> {
   late List<Map<String, dynamic>> hostels;
 
   Future<List<Map<String, dynamic>>> getHostels() async {
-    var hostels = await NodeHostelProvider().getOwnerHostel(id: id!);
-    print(hostels);
-    return hostels;
+    try {
+      var hostels = await NodeHostelProvider().getOwnerHostel(id: id!);
+      // print(hostels);
+      return hostels;
+    } on Exception catch (e) {
+      print('Owner Hostel Error:$e');
+      throw UnableToRetrieveHostelException;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Hostel'),
+        title: const Text(
+          'Manage Hostel',
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

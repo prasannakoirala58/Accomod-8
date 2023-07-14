@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 import '../../pages/hostel_details_screen.dart';
+import '../../utility/string_formatter/user_data_formatter.dart';
 
 class UserListScreen extends StatefulWidget {
   final String token;
@@ -120,12 +121,17 @@ class _UserListScreenState extends State<UserListScreen> {
                           items: featured.map<Widget>((hostel) {
                             return GestureDetector(
                               onTap: () {
+                                Map<String, dynamic> extractedData =
+                                    UserDataFormatter.extractValues(
+                                        widget.token);
+                                final id = extractedData['id'];
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
                                       showVerifyButton: false,
+                                      id: id,
                                     ),
                                   ),
                                 );
@@ -207,6 +213,10 @@ class _UserListScreenState extends State<UserListScreen> {
                                 : remainingHostels[index];
                             return GestureDetector(
                               onTap: () {
+                                Map<String, dynamic> extractedData =
+                                    UserDataFormatter.extractValues(
+                                        widget.token);
+                                final id = extractedData['id'];
                                 print('Hostel:$hostel');
                                 Navigator.push(
                                   context,
@@ -214,6 +224,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                     builder: (context) => HostelDetailsScreen(
                                       hostel: hostel,
                                       showVerifyButton: false,
+                                      id: id,
                                     ),
                                   ),
                                 );

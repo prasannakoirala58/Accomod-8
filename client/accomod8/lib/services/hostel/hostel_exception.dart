@@ -1,0 +1,1 @@
+class UnableToRetrieveHostelException implements Exception {}

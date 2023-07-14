@@ -1,5 +1,7 @@
 // import 'dart:io';
 
+import 'dart:io';
+
 abstract class HostelProvider {
   Future<String> registerHostel({
     required String name,
@@ -9,8 +11,8 @@ abstract class HostelProvider {
     required double longitude,
     required String description,
     required String forGender,
-    // required List<File> images,
-    // required File document,
+    List<File?>? images,
+    required File? document,
     required bool isVerified,
     required List<String> amenities,
     required List<Map<String, dynamic>> rooms,
