@@ -128,7 +128,7 @@ exports.register_hostel = async (req, res, next) => {
           images[i].buffer,
           'tempImg.jpg',
           'hostelImages',
-          `${user.username}_image`
+          `${user.username}_image_${i + 1}`
         );
       }
     }
