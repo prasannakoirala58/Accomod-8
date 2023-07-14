@@ -6,6 +6,7 @@ import 'package:accomod8/utility/snackbar/error_snackbar.dart';
 import 'package:accomod8/utility/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:accomod8/pages/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../enums/gender_enums.dart';
 import '../enums/user_type_enums.dart';
@@ -26,6 +27,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formField = GlobalKey<FormState>();
   File? selectedImageFromGallery;
   File? selectedImageFromCamera;
+  File? profilePicture;
+  final ImageUploader _imageUploader = ImageUploader();
   late final TextEditingController _firstname;
   late final TextEditingController _lastname;
   late final TextEditingController _email;
@@ -58,6 +61,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  Future<ImageSource?> _showImageSourceSelectionDialog() async {
+    return await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _selectProfilePhoto() async {
+    final source = await _showImageSourceSelectionDialog();
+    if (source != null) {
+      final image = await _imageUploader.selectImageFromSource(source);
+      if (image != null) {
+        setState(() {
+          profilePicture = image;
+        });
+        // widget.onDocumentPhotoSelected(documentPhoto);
+      }
+    }
+  }
+
   bool _passwordVisible = false;
 
   GenderTypeEnum? _genderTypeEnum;
@@ -87,39 +133,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 200,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextButton(
-                    onPressed: () async {
-                      selectedImageFromCamera =
-                          await ImageUploader().selectImageFromCamera();
-                      print(
-                          'Camera image Path in Signup$selectedImageFromCamera');
-                    },
-                    child: const Text('Pick Image from Camera'),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextButton(
-                    onPressed: () async {
-                      selectedImageFromGallery =
-                          await ImageUploader().selectImageFromGallery();
-                      print(
-                          'Gallery image Path in Signup$selectedImageFromGallery');
-                    },
-                    child: const Text('Pick Image from Gallery'),
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: selectedImageFromCamera != null
-                        ? Image.file(
-                            selectedImageFromCamera!,
-                            height: 100,
-                            width: 150,
-                          )
-                        : const Text('Camera image is shown here')),
+                // Padding(
+                //   padding: const EdgeInsets.all(20),
+                //   child: TextButton(
+                //     onPressed: () async {
+                //       selectedImageFromCamera =
+                //           await ImageUploader().selectImageFromCamera();
+                //       print(
+                //           'Camera image Path in Signup$selectedImageFromCamera');
+                //     },
+                //     child: const Text('Pick Image from Camera'),
+                //   ),
+                // ),
+
+                // Padding(
+                //     padding: const EdgeInsets.all(20),
+                //     child: selectedImageFromCamera != null
+                //         ? Image.file(
+                //             selectedImageFromCamera!,
+                //             height: 100,
+                //             width: 150,
+                //           )
+                //         : const Text('Camera image is shown here')),
                 Padding(
                     padding: const EdgeInsets.all(20),
                     child: selectedImageFromGallery != null
@@ -128,8 +163,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             height: 100,
                             width: 150,
                           )
-                        : const Text('Gallery image is shown here')),
+                        : const Text('Profile Picture')),
                 const SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextButton(
+                    onPressed: () => _selectProfilePhoto(),
+                    // selectedImageFromGallery =
+                    //     await ImageUploader().selectImageFromGallery();
+                    // print(
+                    //     'Gallery image Path in Signup$selectedImageFromGallery');
+                    // },
+                    child: const Text('Upload Profile Picture'),
+                  ),
+                ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
@@ -427,8 +474,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             password: password,
                             matchingPassword: confirmPassword,
                             userType: userType,
-                            image: File(selectedImageFromGallery!.path),
-                            document: File(selectedImageFromCamera!.path),
+                            image: File(profilePicture!.path),
+                            // image: File(selectedImageFromGallery!.path),
+                            // document: File(selectedImageFromCamera!.path),
                           );
 
                           if (response == 'success') {
