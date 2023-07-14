@@ -118,7 +118,7 @@ class _AddHostelFormScreenState extends State<AddHostelFormScreen> {
         ),
         Step(
           state: _activeStepIndex <= 2 ? StepState.editing : StepState.complete,
-          isActive: _activeStepIndex >= 0,
+          isActive: _activeStepIndex >= 2,
           title: const Text(
             'Photos',
             style: TextStyle(

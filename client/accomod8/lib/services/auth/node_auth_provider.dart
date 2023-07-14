@@ -24,14 +24,14 @@ class NodeAuthProvider implements AuthProvider {
     required String matchingPassword,
     required String userType,
     required File image,
-    required File document,
+    // required File document,
   }) async {
     if (matchingPassword != password) {
       throw PasswordDoesNotMatchAuthException;
     }
     Dio dio = Dio();
     String photoFileName = image.path.split('/').last;
-    String documentFileName = document.path.split('/').last;
+    // String documentFileName = document.path.split('/').last;
 
     // print('photoFile:$photoFileName, documentFile:$documentFileName');
 
@@ -50,11 +50,11 @@ class NodeAuthProvider implements AuthProvider {
           filename: photoFileName,
           contentType: MediaType('image', 'png'),
         ),
-        'document': await MultipartFile.fromFile(
-          document.path,
-          filename: documentFileName,
-          contentType: MediaType('image', 'png'),
-        ),
+        // 'document': await MultipartFile.fromFile(
+        //   document.path,
+        //   filename: documentFileName,
+        //   contentType: MediaType('image', 'png'),
+        // ),
       },
     );
 

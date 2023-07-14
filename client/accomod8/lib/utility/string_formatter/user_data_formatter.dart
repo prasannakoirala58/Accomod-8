@@ -28,4 +28,10 @@ class UserDataFormatter {
     }
     return extractedData;
   }
+
+  String extractPhoto(String data, String field) {
+    final regex = RegExp('$field: (.*?)(?:,|\$)');
+    final match = regex.firstMatch(data);
+    return match?.group(1) ?? '';
+  }
 }
