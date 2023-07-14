@@ -38,7 +38,7 @@ abstract class AuthProvider {
     required String matchingPassword,
     required String userType,
     required File image,
-    required File document,
+    // required File document,
   });
 
   Future<String> logOut();

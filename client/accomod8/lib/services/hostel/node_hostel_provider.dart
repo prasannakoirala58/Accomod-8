@@ -197,4 +197,31 @@ class NodeHostelProvider implements HostelProvider {
     print('Raw Response : $response');
     return response.toString();
   }
+
+  @override
+  Future<void> updateHostelDetails({
+    required String hostelId,
+    required String newDescription,
+    required String newForGender,
+  }) async {
+    DioInstance dioInstance = DioInstance();
+    Dio dio = dioInstance.dio;
+    final String updateUrl = '$updateHostelUrl/$hostelId';
+
+    Map<String, dynamic> requestBody = {
+      'description': newDescription,
+      'for_gender': newForGender,
+    };
+
+    try {
+      var response = await dio.patch(
+        updateUrl,
+        data: requestBody,
+      );
+
+      print('Raw Response: $response');
+    } on Exception catch (e) {
+      print('Error in update:$e');
+    }
+  }
 }

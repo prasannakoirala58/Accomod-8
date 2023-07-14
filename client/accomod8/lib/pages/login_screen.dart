@@ -1,5 +1,6 @@
 import 'package:accomod8/adminsideinterface/admin_home.dart';
 import 'package:accomod8/ownersideinterface/ownernavbar.dart';
+import 'package:accomod8/pages/forgot_password_screen.dart';
 import 'package:accomod8/pages/signup_screen.dart';
 import 'package:accomod8/services/auth/node_auth_provider.dart';
 import 'package:accomod8/usersideinterface/navbarroots.dart';
@@ -146,133 +147,153 @@ class _LogInScreenState extends State<LogInScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(
+                  height: 50,
+                ),
                 Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        color: const Color.fromARGB(255, 213, 127, 93),
-                        borderRadius: BorderRadius.circular(12),
-                        child: InkWell(
-                          onTap: () async {
-                            final email = _email.text;
-                            final password = _password.text;
+                  padding: const EdgeInsets.all(10.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Material(
+                      color: const Color.fromARGB(255, 213, 127, 93),
+                      borderRadius: BorderRadius.circular(12),
+                      child: InkWell(
+                        onTap: () async {
+                          final email = _email.text;
+                          final password = _password.text;
 
-                            // if (email.isEmpty || password.isEmpty) {
-                            //   ErrorSnackBar.showSnackBar(
-                            //     context,
-                            //     'Fields cannot be empty',
-                            //   );
-                            //   throw FieldsCannotBeEmptyException;
-                            // }
-                            if (_formField.currentState!.validate()) {
-                              try {
-                                _loginToken = await NodeAuthProvider().logIn(
-                                  email: email,
-                                  password: password,
+                          // if (email.isEmpty || password.isEmpty) {
+                          //   ErrorSnackBar.showSnackBar(
+                          //     context,
+                          //     'Fields cannot be empty',
+                          //   );
+                          //   throw FieldsCannotBeEmptyException;
+                          // }
+                          if (_formField.currentState!.validate()) {
+                            try {
+                              _loginToken = await NodeAuthProvider().logIn(
+                                email: email,
+                                password: password,
+                              );
+                              // cookieUtil.retrieveDataFromCookie();
+                              print('Token in Login:$_loginToken');
+
+                              Map<String, dynamic> extractedData =
+                                  UserDataFormatter.extractValues(_loginToken);
+                              final userType = extractedData['usertype'];
+                              // print('Usertype:$userType');
+
+                              setState(() {
+                                SuccessSnackBar.showSnackBar(
+                                  context,
+                                  'Logged in successfully',
                                 );
-                                // cookieUtil.retrieveDataFromCookie();
-                                print('Token in Login:$_loginToken');
-
-                                Map<String, dynamic> extractedData =
-                                    UserDataFormatter.extractValues(
-                                        _loginToken);
-                                final userType = extractedData['usertype'];
-                                // print('Usertype:$userType');
-
-                                setState(() {
-                                  SuccessSnackBar.showSnackBar(
+                                if (userType == 'user') {
+                                  Navigator.pushReplacement(
                                     context,
-                                    'Logged in successfully',
+                                    MaterialPageRoute(
+                                      builder: (context) => NavBarRoots(
+                                        token: _loginToken,
+                                      ),
+                                    ),
                                   );
-                                  if (userType == 'user') {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => NavBarRoots(
-                                          token: _loginToken,
-                                        ),
+                                } else if (userType == 'admin') {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AdminHome(
+                                        token: _loginToken,
                                       ),
-                                    );
-                                  } else if (userType == 'admin') {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AdminHome(
-                                          token: _loginToken,
-                                        ),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => OwnerNavBar(
+                                        token: _loginToken,
                                       ),
-                                    );
-                                  } else {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => OwnerNavBar(
-                                          token: _loginToken,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                });
+                                    ),
+                                  );
+                                }
+                              });
 
-                                // SuccessSnackBar.showSnackBar(
-                                //   context,
-                                //   'Logged in successfully',
-                                // );
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => NavBarRoots(
-                                //       token: _loginToken,
-                                //     ),
-                                //   ),
-                                // );
+                              // SuccessSnackBar.showSnackBar(
+                              //   context,
+                              //   'Logged in successfully',
+                              // );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => NavBarRoots(
+                              //       token: _loginToken,
+                              //     ),
+                              //   ),
+                              // );
 
-                                // print('ok data aayo');
-                                // print(_loginToken);
-                              } on WrongCredentialsAuthException {
-                                ErrorSnackBar.showSnackBar(
-                                  context,
-                                  'Wrong Credentials',
-                                );
-                                // } on FieldsCannotBeEmptyException catch (_) {
-                                //   ErrorSnackBar.showSnackBar(
-                                //     context,
-                                //     'Fields cannot be empty',
-                                //   );
-                              } on Exception catch (e) {
-                                ErrorSnackBar.showSnackBar(
-                                  context,
-                                  e.toString(),
-                                );
+                              // print('ok data aayo');
+                              // print(_loginToken);
+                            } on WrongCredentialsAuthException {
+                              ErrorSnackBar.showSnackBar(
+                                context,
+                                'Wrong Credentials',
+                              );
+                              // } on FieldsCannotBeEmptyException catch (_) {
+                              //   ErrorSnackBar.showSnackBar(
+                              //     context,
+                              //     'Fields cannot be empty',
+                              //   );
+                            } on Exception catch (e) {
+                              ErrorSnackBar.showSnackBar(
+                                context,
+                                e.toString(),
+                              );
 
-                                print('Login Error:${e.toString()}');
-                              }
+                              print('Login Error:${e.toString()}');
                             }
-                            // ErrorSnackBar.showSnackBar(
-                            //   context,
-                            //   'Hmmmmmm',
-                            // );
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 40),
-                            child: Center(
-                              child: Text(
-                                "Login",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                          }
+                          // ErrorSnackBar.showSnackBar(
+                          //   context,
+                          //   'Hmmmmmm',
+                          // );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 40),
+                          child: Center(
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                       ),
-                    )),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPassword(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 242, 162, 131),
+                    ),
+                  ),
+                ),
                 const SizedBox(
-                  height: 20,
+                  height: 0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -288,17 +309,20 @@ class _LogInScreenState extends State<LogInScreen> {
                     TextButton(
                       onPressed: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpScreen(),
+                          ),
+                        );
                       },
-                      child: const Text("Create an Account",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 242, 162, 131),
-                          )),
+                      child: const Text(
+                        "Create an Account",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 242, 162, 131),
+                        ),
+                      ),
                     ),
                   ],
                 ),

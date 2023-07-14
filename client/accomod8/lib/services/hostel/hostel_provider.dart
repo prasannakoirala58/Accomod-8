@@ -35,4 +35,10 @@ abstract class HostelProvider {
     required bool toVerify,
     required String id,
   });
+
+  Future<void> updateHostelDetails({
+    required String hostelId,
+    required String newDescription,
+    required String newForGender,
+  });
 }
