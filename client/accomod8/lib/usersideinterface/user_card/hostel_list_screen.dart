@@ -54,15 +54,16 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> extractedData =
-        UserDataFormatter.extractValues(widget.token);
-    final profilePicture = extractedData['profile_picture'];
+    var profilePicture =
+        UserDataFormatter().extractPhoto(widget.token, 'profile_picture');
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 242, 162, 131),
         title: isSearching
             ? TextField(
                 onChanged: (value) {
+                  print('Profile Picture:$profilePicture');
                   setState(() {
                     searchQuery = value;
                     filterHostels();
@@ -81,7 +82,7 @@ class _UserListScreenState extends State<UserListScreen> {
                   //profile picture display
                   CircleAvatar(
                     radius: 20,
-                    child: profilePicture != null && profilePicture.isNotEmpty
+                    child: profilePicture.isNotEmpty
                         ? Image.network(profilePicture)
                         : Image.asset('images/acclog.png'),
                   ),
