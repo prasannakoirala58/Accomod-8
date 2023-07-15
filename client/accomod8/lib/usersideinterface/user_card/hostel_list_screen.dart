@@ -82,9 +82,11 @@ class _UserListScreenState extends State<UserListScreen> {
                   //profile picture display
                   CircleAvatar(
                     radius: 20,
-                    child: profilePicture.isNotEmpty
-                        ? Image.network(profilePicture)
-                        : Image.asset('images/acclog.png'),
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: profilePicture.isNotEmpty
+                        ? NetworkImage(profilePicture) as ImageProvider<Object>?
+                        : AssetImage('images/acclog.png')
+                            as ImageProvider<Object>?,
                   ),
                 ],
               ),
@@ -130,7 +132,7 @@ class _UserListScreenState extends State<UserListScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(height: 10),
+                      // SizedBox(height: 10),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: CarouselSlider(
@@ -166,33 +168,55 @@ class _UserListScreenState extends State<UserListScreen> {
                                     ),
                                   ],
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                child: Stack(
                                   children: [
-                                    CircleAvatar(
-                                      radius: 40,
-                                      child: hostel['images'] != null &&
-                                              hostel['images'].isNotEmpty
-                                          ? Image.network(hostel['images'][0])
-                                          : Image.asset('images/acclog.png'),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      '${hostel['name']}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 242, 162, 131),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: hostel['images'] != null &&
+                                                  hostel['images'].isNotEmpty
+                                              ? NetworkImage(
+                                                      hostel['images'][0])
+                                                  as ImageProvider<Object>
+                                              : AssetImage('images/acclog.png')
+                                                  as ImageProvider<Object>,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    Text(
-                                      '${hostel['address']}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 242, 162, 131),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        color: Colors.black54,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${hostel['name']}',
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              '${hostel['address']}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -208,6 +232,7 @@ class _UserListScreenState extends State<UserListScreen> {
                           ),
                         ),
                       ),
+
                       SizedBox(
                         height: 20,
                       ),
